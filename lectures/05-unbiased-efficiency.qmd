@@ -1,0 +1,33 @@
+---
+title: "Basic statistical models and bootstrap"
+author: "Jonas Moss"
+---
+
+## Unbiased estimators
+
+*Note:*: Dekking et al. claims that unbiasedness is *desireable*. I disagree, it's almost always irrelevant, and what matters are measures such as the mean squared error, introduced in the next lecture.
+
+**Uses the Poisson process again! Damn.**
+
+## Estimators
+**Definition.** Estimator and estimate.
+
+1. When is one estimator better than another?
+2. Can we find "the best" estimator?
+
+**Definition: Sampling distribution.**
+
+## Unbiased estimators
+**Definition: Unbiased estimator.**
+
+### Why unbiased estimators (usually) aren't important
+
+**Definition: Median unbiased estimator.**
+
+No one talks about median unbiased estimators. Why? Because it's hard to compute them. But they should intuitively be just as attractive as unbiased estimators.
+
+## Estimating the number of German tanks
+
+## Variance of an estimator
+
+## Mean squared error

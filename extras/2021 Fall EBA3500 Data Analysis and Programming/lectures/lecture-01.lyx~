@@ -1,0 +1,1548 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine natbib
+\cite_engine_type authoryear
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 4cm
+\topmargin 4cm
+\rightmargin 4cm
+\bottommargin 4cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+EBA3500 Fall 2021
+\begin_inset Newline newline
+\end_inset
+
+Lecture 1: Matrices and Python
+\end_layout
+
+\begin_layout Author
+Jonas Moss
+\end_layout
+
+\begin_layout Standard
+Recall the definition of an 
+\begin_inset Formula $m\times n$
+\end_inset
+
+ matrix:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+The matrix 
+\begin_inset Formula $A$
+\end_inset
+
+ has elements 
+\begin_inset Formula $a_{ij}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+These are written in lower case letters for some reason; I didn't choose
+ this, it's the convention! 
+\end_layout
+
+\begin_layout Itemize
+Sometimes we describe matrices using their elements only.
+\end_layout
+
+\begin_layout Itemize
+Remember that 
+\begin_inset Formula $m$
+\end_inset
+
+ is the number of rows and 
+\begin_inset Formula $n$
+\end_inset
+
+ the number of columns, 
+\begin_inset Formula $r\times c$
+\end_inset
+
+.
+ It's RC for RC cars or 
+\begin_inset Quotes eld
+\end_inset
+
+remote controller
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+We will use numpy matrices.
+\end_layout
+
+\begin_layout Itemize
+The key module is called 
+\begin_inset Formula $\mathtt{linalg}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+See https://numpy.org/doc/stable/reference/routines.linalg.html.
+\end_layout
+
+\begin_layout Itemize
+For instance 
+\begin_inset Formula $\mathtt{A=np.array([[1,0,1],[0,1,0],[1,0,1]])}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Then 
+\begin_inset Formula $A=\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Four operations:
+\end_layout
+
+\begin_layout Itemize
+Addition
+\end_layout
+
+\begin_layout Itemize
+Multiplication
+\end_layout
+
+\begin_layout Itemize
+Inversion (the matrix variant of division!)
+\end_layout
+
+\begin_layout Itemize
+Transpose
+\end_layout
+
+\begin_layout Standard
+All of these are important!
+\end_layout
+
+\begin_layout Itemize
+Wikipedia is an excellent resource for mathematics facts.
+ 
+\end_layout
+
+\begin_layout Itemize
+Sometimes difficult, but you should be able to read it anyway.
+\end_layout
+
+\begin_layout Itemize
+Plenty of free linear algebra resources online too.
+\end_layout
+
+\begin_layout Itemize
+An example is http://linear.ups.edu/html/fcla.html
+\end_layout
+
+\begin_layout Itemize
+You will probably have to study and restudy linear algebra during your career,
+ as it's the foundation of most data science.
+\end_layout
+
+\begin_layout Section*
+Matrix addition and scalar multiplication
+\end_layout
+
+\begin_layout Subsection*
+Matrix addition
+\end_layout
+
+\begin_layout Standard
+Two 
+\begin_inset Formula $m\times n$
+\end_inset
+
+ matrices 
+\begin_inset Formula $A$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ can be added to each other element-wise, where 
+\begin_inset Formula $(a+b)_{ij}=a_{ij}+b_{ij}$
+\end_inset
+
+, i.e.,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{array}\right]+\left[\begin{array}{cccc}
+b_{11} & b_{12} & \cdots & b_{1n}\\
+b_{21} & b_{22} & \cdots & b_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+b_{m1} & b_{m2} & \cdots & b_{mn}
+\end{array}\right]=\left[\begin{array}{cccc}
+a_{11}+b_{11} & a_{12}+b_{12} & \cdots & a_{1n}+b_{1n}\\
+a_{21}+b_{21} & a_{21}+b_{22} & \cdots & a_{2n}+b_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1}+b_{11} & a_{m2}+b_{m2} & \cdots & a_{mn}+b_{mn}
+\end{array}\right]
+\]
+
+\end_inset
+
+This is just like elementwise addition of Numpy arrays, which we have already
+ covered.
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]+\left[\begin{array}{ccc}
+1 & 2 & 2\\
+2 & 1 & 3\\
+3 & 2 & 1
+\end{array}\right]=\left[\begin{array}{ccc}
+2 & 2 & 3\\
+2 & 2 & 3\\
+4 & 2 & 2
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Verbatim
+>>> A = np.array([[1,0,1], [0,1,0], [1,0,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> A + B 
+\end_layout
+
+\begin_layout Verbatim
+array([[2, 2, 3],        
+\end_layout
+
+\begin_layout Verbatim
+       [2, 2, 3],        
+\end_layout
+
+\begin_layout Verbatim
+       [4, 2, 2]])
+\end_layout
+
+\begin_layout Standard
+Minus is defined in the same way.
+\end_layout
+
+\begin_layout Subsection*
+Scalar multiplication
+\end_layout
+
+\begin_layout Standard
+In 
+\begin_inset Formula $c\in\mathbb{R}$
+\end_inset
+
+ is a number, then 
+\begin_inset Formula $cA$
+\end_inset
+
+ has elements 
+\begin_inset Formula $ca_{ij}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+cA=\left[\begin{array}{cccc}
+ca_{11} & ca_{12} & \cdots & ca_{1n}\\
+ca_{21} & ca_{22} & \cdots & ca_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+ca_{m1} & ca_{m2} & \cdots & ca_{mn}
+\end{array}\right]
+\]
+
+\end_inset
+
+This is just like vectorized multiplication in Numpy.
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+2\left[\begin{array}{ccc}
+1 & 2 & 2\\
+2 & 1 & 3\\
+3 & 2 & 1
+\end{array}\right]=\left[\begin{array}{ccc}
+2 & 4 & 4\\
+4 & 2 & 6\\
+6 & 4 & 2
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> 2 * B 
+\end_layout
+
+\begin_layout Verbatim
+array([[2, 4, 4],        
+\end_layout
+
+\begin_layout Verbatim
+       [4, 2, 6],        
+\end_layout
+
+\begin_layout Verbatim
+       [6, 4, 2]])
+\end_layout
+
+\begin_layout Section*
+Matrix multiplication
+\end_layout
+
+\begin_layout Standard
+Matrix multiplication is 
+\emph on
+not
+\emph default
+ like vectorized multiplication of arrays, but something else entirely.
+\end_layout
+
+\begin_layout Standard
+The matrix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A=\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{array}\right]
+\]
+
+\end_inset
+
+Can be written in 
+\emph on
+column form
+\emph default
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+A & = & \left[\begin{array}{cccc}
+A_{\cdot1} & A_{\cdot2} & \ldots & A_{\cdot n}\end{array}\right]\\
+ & = & \left[\begin{array}{cccc}
+\boldsymbol{a}_{1} & \boldsymbol{a}_{2} & \ldots & \boldsymbol{a}_{n}\end{array}\right]
+\end{eqnarray*}
+
+\end_inset
+
+Here 
+\begin_inset Formula 
+\[
+\boldsymbol{a}_{j}=\left[\begin{array}{c}
+a_{1j}\\
+a_{2j}\\
+\vdots\\
+a_{mj}
+\end{array}\right]
+\]
+
+\end_inset
+
+is the 
+\begin_inset Formula $j$
+\end_inset
+
+th column of 
+\begin_inset Formula $A$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection*
+Multiplication
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $A$
+\end_inset
+
+ be an 
+\begin_inset Formula $m\times n$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{x}$
+\end_inset
+
+ be a column.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ax=\boldsymbol{a}_{1}x_{1}+\boldsymbol{a}_{2}x_{2}+\cdots+\boldsymbol{a}_{n}x_{n}
+\]
+
+\end_inset
+
+A 
+\emph on
+linear combination
+\emph default
+ of the columns of 
+\begin_inset Formula $A$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]\left[\begin{array}{c}
+1\\
+2\\
+3
+\end{array}\right] & = & \left[\begin{array}{c}
+1\\
+0\\
+1
+\end{array}\right]\cdot1+\left[\begin{array}{c}
+0\\
+1\\
+0
+\end{array}\right]\cdot2+\left[\begin{array}{c}
+1\\
+0\\
+1
+\end{array}\right]\cdot3\\
+ & = & \left[\begin{array}{c}
+1\\
+0\\
+1
+\end{array}\right]+\left[\begin{array}{c}
+0\\
+2\\
+0
+\end{array}\right]+\left[\begin{array}{c}
+3\\
+0\\
+3
+\end{array}\right]\\
+ & = & \left[\begin{array}{c}
+4\\
+2\\
+4
+\end{array}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Explanation
+\end_layout
+
+\begin_layout Standard
+Matrices are used to represent linear equations! Matrix multiplication ensures
+ that
+\begin_inset Formula 
+\[
+Ax=\left[\begin{array}{ccccccc}
+a_{11}x_{1} & + & a_{12}x_{2} & + & \cdots & + & a_{1n}x_{n}\\
+a_{21}x_{1} & + & a_{22}x_{2} & + & \cdots & + & a_{2n}x_{n}\\
+\vdots &  & \vdots &  & \ddots &  & \vdots\\
+a_{m1}x_{1} & + & a_{m2}x_{1} & + & \cdots & + & a_{mn}x_{n}
+\end{array}\right]
+\]
+
+\end_inset
+
+For instance,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]\left[\begin{array}{c}
+x_{1}\\
+x_{2}\\
+x_{3}
+\end{array}\right]=\left[\begin{array}{c}
+x_{1}+x_{3}\\
+x_{2}\\
+x_{1}+x_{3}
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Extension to matrices
+\end_layout
+
+\begin_layout Standard
+Multiplying two matrices is like having a bunch of matrix equations at the
+ same time! 
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $B\in\mathbb{R}^{n\times k}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AB & = & A\left[\begin{array}{cccc}
+\boldsymbol{b}_{1} & \boldsymbol{b}_{2} & \cdots & \boldsymbol{b}_{k}\end{array}\right],\\
+ & = & \left[\begin{array}{cccc}
+A\boldsymbol{b}_{1} & A\boldsymbol{b}_{2} & \cdots & \boldsymbol{Ab}_{k}\end{array}\right].
+\end{eqnarray*}
+
+\end_inset
+
+For example,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]\left[\begin{array}{ccc}
+1 & 2 & 2\\
+2 & 1 & 3\\
+3 & 2 & 1
+\end{array}\right]=\left[\begin{array}{ccc}
+4 & 4 & 3\\
+2 & 1 & 3\\
+4 & 4 & 3
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+This definition of multiplication equivalent to the definition you probably
+ learned in your math course.
+ 
+\end_layout
+
+\begin_layout Itemize
+The definiton you learned is easier to use when calculating by hand, but
+ not for understanding and theory.
+\end_layout
+
+\begin_layout Itemize
+To multiply to numpy arrays using matrix multiplication, write 
+\begin_inset Formula $\texttt{A@B}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Verbatim
+>>> A = np.array([[1,0,1], [0,1,0], [1,0,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> A@B 
+\end_layout
+
+\begin_layout Verbatim
+array([[4, 4, 3],        
+\end_layout
+
+\begin_layout Verbatim
+       [2, 1, 3],        
+\end_layout
+
+\begin_layout Verbatim
+       [4, 4, 3]])
+\end_layout
+
+\begin_layout Section*
+Matrix inverse and matrix equations
+\end_layout
+
+\begin_layout Standard
+A matrix equation is on the form
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Ax=b.
+\]
+
+\end_inset
+
+May also be called a 
+\emph on
+linear equation
+\emph default
+ or 
+\emph on
+system of linear equations
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+From the definition of matrix multiplication, this means that 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{a}_{1}x_{1}+\boldsymbol{a}_{2}x_{2}+\cdots+\boldsymbol{a}_{n}x_{n}=b.
+\]
+
+\end_inset
+
+In other words, there is a linear combination of the columns of 
+\begin_inset Formula $A$
+\end_inset
+
+ that add up 
+\begin_inset Formula $b$
+\end_inset
+
+!
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\left[\begin{array}{ccc}
+1 & 0 & 1\\
+0 & 1 & 0\\
+1 & 0 & 1
+\end{array}\right]\left[\begin{array}{c}
+x_{1}\\
+x_{2}\\
+x_{3}
+\end{array}\right] & = & \left[\begin{array}{c}
+b_{1}\\
+b_{2}\\
+b_{3}
+\end{array}\right]\\
+x_{1}+x_{3} & = & b_{1}\\
+x_{2} & = & b_{2}\\
+x_{1}+x_{3} & = & b_{3}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Three essential facts about linear equations
+\end_layout
+
+\begin_layout Standard
+A system of linear equations 
+\begin_inset Formula $Ax=b$
+\end_inset
+
+ has either:
+\end_layout
+
+\begin_layout Enumerate
+One solution.
+\end_layout
+
+\begin_layout Enumerate
+Infinitely many solutions.
+\end_layout
+
+\begin_layout Enumerate
+No solution at all.
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+x_{1}+x_{3} & = & b_{1}\\
+x_{2} & = & b_{2}\\
+x_{1}+x_{3} & = & b_{3}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+When 
+\begin_inset Formula $b_{1}\neq b_{3}$
+\end_inset
+
+, this system of equations has no solution, as 
+\begin_inset Formula $x_{1}+x_{3}=x_{1}+x_{3}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $b_{1}=b_{3}$
+\end_inset
+
+, it has infinitely many solutions.
+ This happens because 
+\begin_inset Formula $x_{1}=b_{1}-x_{3}$
+\end_inset
+
+ is the equation for a line!
+\end_layout
+
+\begin_layout Itemize
+To solve the system 
+\begin_inset Formula $Ax=b$
+\end_inset
+
+ in Python, use
+\begin_inset Formula 
+\[
+\mathtt{np.linalg.solve(A,b)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $Ax=b$
+\end_inset
+
+ has a unique solution for every 
+\begin_inset Formula $b$
+\end_inset
+
+, then 
+\begin_inset Formula $A$
+\end_inset
+
+ is 
+\emph on
+invertible
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+In this case there is a matrix 
+\begin_inset Formula $A^{-1}$
+\end_inset
+
+ so that 
+\begin_inset Formula $x=A^{-1}b$
+\end_inset
+
+, which is unique.
+\end_layout
+
+\begin_layout Itemize
+To find the inverse of a matrix in Python, use
+\begin_inset Formula 
+\[
+\mathtt{np.linalg.inv(A)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> np.linalg.inv(B)  
+\end_layout
+
+\begin_layout Verbatim
+array([[-0.45454545,  0.18181818,  0.36363636],        
+\end_layout
+
+\begin_layout Verbatim
+       [ 0.63636364, -0.45454545,  0.09090909],        
+\end_layout
+
+\begin_layout Verbatim
+       [ 0.09090909,  0.36363636, -0.27272727]])
+\end_layout
+
+\begin_layout Section*
+Matrix inverse
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $n\times n$
+\end_inset
+
+ identity matrix is the unique matrix satisfying
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+AI=A
+\]
+
+\end_inset
+
+And equals
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{cccc}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & \ddots & \vdots\\
+0 & 0 & \cdots & 1
+\end{array}\right]=\left[\begin{array}{cccc}
+\boldsymbol{e}_{1} & \boldsymbol{e}_{2} & \cdots & \boldsymbol{e}_{k}\end{array}\right]
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $\boldsymbol{e}_{k}$
+\end_inset
+
+ is the 
+\begin_inset Formula $k$
+\end_inset
+
+th unit vector.
+ For instance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{e}_{2}=\left[\begin{array}{c}
+0\\
+1\\
+\vdots\\
+0
+\end{array}\right].
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using the definition of matrix multiplication, we can verify that
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+A\boldsymbol{e}_{i}=\boldsymbol{a}_{i}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Proof
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+AI & = & A\left[\begin{array}{cccc}
+\boldsymbol{e}_{1} & \boldsymbol{e}_{2} & \cdots & \boldsymbol{e}_{k}\end{array}\right]\\
+ & = & \left[A\begin{array}{cccc}
+\boldsymbol{e}_{1} & A\boldsymbol{e}_{2} & \cdots A & \boldsymbol{e}_{k}\end{array}\right]\\
+ & = & \left[\begin{array}{cccc}
+\boldsymbol{a}_{1} & \boldsymbol{a}_{2} & \cdots & \boldsymbol{a}_{k}\end{array}\right]
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Inversion facts
+\end_layout
+
+\begin_layout Itemize
+A square matrix 
+\begin_inset Formula $A\in\mathbb{R}^{n\times n}$
+\end_inset
+
+ is invertible (non-singular) if there is a matrix 
+\begin_inset Formula $A^{-1}$
+\end_inset
+
+ so that 
+\begin_inset Formula $AA^{-1}=A^{-1}A=I$
+\end_inset
+
+.
+ The 
+\emph on
+inverse
+\emph default
+ 
+\begin_inset Formula $A^{-1}$
+\end_inset
+
+ is unique if it exists.
+ 
+\end_layout
+
+\begin_layout Itemize
+Not every matrix has an inverse!
+\end_layout
+
+\begin_layout Itemize
+Regarding addition and inversion: 
+\begin_inset Formula $(A+B)^{-1}\neq A^{-1}+B^{-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Why? If 
+\begin_inset Formula $a,b$
+\end_inset
+
+ are numbers, then 
+\begin_inset Formula $1/(a+b)\neq1/a+1/b=(a+b)/(ab)!$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Basic facts about inversion:
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $c\neq0$
+\end_inset
+
+ and 
+\begin_inset Formula $A$
+\end_inset
+
+ is invertible, then 
+\begin_inset Formula $(cA)^{-1}=\frac{1}{c}A^{-1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $A,B$
+\end_inset
+
+ are invertible, then 
+\begin_inset Formula $AB$
+\end_inset
+
+ is invertible, and 
+\begin_inset Formula $(AB)^{-1}=B^{-1}A^{-1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Gaining a solid understanding of when matrices are invertible and not is
+ important, but beyond the scope of this lecture.
+ But there are three ways to check if a matrix is invertible in Python:
+\end_layout
+
+\begin_layout Itemize
+Is its determinant different from 
+\begin_inset Formula $0$
+\end_inset
+
+? The determinant is the signed volume of the parallelotope defined by the
+ matrix – think of it as the 
+\begin_inset Quotes eld
+\end_inset
+
+volume of the matrix
+\begin_inset Quotes erd
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{np.linalg.det(B)}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Find its eigenvalues.
+ The matrix is invertible if all eigenvalues are different from 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ A matrix is 
+\emph on
+numerically singular
+\emph default
+ (non-invertible) if its smallest eigenvalue is really close to 
+\begin_inset Formula $0$
+\end_inset
+
+.
+ Then it's hard to work with!
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{np.linalg.eigvals(A)}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Just try to invert it!
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{np.linalg.inv(A)}$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> np.linalg.det(B)  
+\end_layout
+
+\begin_layout Verbatim
+11.000000000000002
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Remember:
+\series default
+ Wikipedia is an excellent resource! https://en.wikipedia.org/wiki/Invertible_matr
+ix
+\end_layout
+
+\begin_layout Section*
+Matrix transpose
+\end_layout
+
+\begin_layout Standard
+The transpose 
+\begin_inset Formula $A^{T}$
+\end_inset
+
+ is the matrix flipped along the diagonal.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{array}\right]^{T}=\left[\begin{array}{cccc}
+a_{11} & a_{21} & \cdots & a_{m1}\\
+a_{12} & a_{22} & \cdots & a_{m2}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{1n} & a_{2n} & \cdots & a_{mn}
+\end{array}\right].
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Example
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{ccc}
+1 & 2 & 2\\
+2 & 1 & 3\\
+3 & 2 & 1
+\end{array}\right]^{T}=\left[\begin{array}{ccc}
+1 & 2 & 3\\
+2 & 1 & 2\\
+2 & 3 & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Transposition facts
+\end_layout
+
+\begin_layout Standard
+To transpose matrices in Python, use either:
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\texttt{np.transpose(A)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\texttt{A.T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], [2,1,3], [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> B.T 
+\end_layout
+
+\begin_layout Verbatim
+array([[1, 2, 3],        
+\end_layout
+
+\begin_layout Verbatim
+       [2, 1, 2],        
+\end_layout
+
+\begin_layout Verbatim
+       [2, 3, 1]])
+\end_layout
+
+\begin_layout Standard
+Three basic transposition facts:
+\end_layout
+
+\begin_layout Itemize
+Addition and transposes: 
+\begin_inset Formula $(A+B)^{T}=A^{T}+B^{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Multiplication and transposes: 
+\begin_inset Formula $(AB)^{T}=B^{T}A^{T}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Connection with transposition: 
+\begin_inset Formula $(A^{-1})^{T}=(A^{T})^{-1}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Element-wise multiplication
+\end_layout
+
+\begin_layout Standard
+Also known as 
+\emph on
+Hadamard multiplication
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[\begin{array}{cccc}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{array}\right]\circ\left[\begin{array}{cccc}
+b_{11} & b_{12} & \cdots & b_{1n}\\
+b_{21} & b_{22} & \cdots & b_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+b_{m1} & b_{m2} & \cdots & b_{mn}
+\end{array}\right]=\left[\begin{array}{cccc}
+a_{11}b_{11} & a_{12}b_{12} & \cdots & a_{1n}b_{1n}\\
+a_{21}b_{21} & a_{21}b_{22} & \cdots & a_{2n}b_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1}b_{11} & a_{m2}b_{m2} & \cdots & a_{mn}b_{mn}
+\end{array}\right]
+\]
+
+\end_inset
+
+Not that useful for matrices, but absolutely useful in Python practice!
+ 
+\end_layout
+
+\begin_layout Verbatim
+>>> A = np.array([[1,0,1], 
+\end_layout
+
+\begin_layout Verbatim
+                 [0,1,0], 
+\end_layout
+
+\begin_layout Verbatim
+                 [1,0,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> B = np.array([[1,2,2], 
+\end_layout
+
+\begin_layout Verbatim
+                  [2,1,3], 
+\end_layout
+
+\begin_layout Verbatim
+                  [3,2,1]])
+\end_layout
+
+\begin_layout Verbatim
+>>> A * B 
+\end_layout
+
+\begin_layout Verbatim
+array([[1, 0, 2],        
+\end_layout
+
+\begin_layout Verbatim
+       [0, 1, 0],        
+\end_layout
+
+\begin_layout Verbatim
+       [3, 0, 1]])
+\end_layout
+
+\begin_layout Section*
+The dot product
+\end_layout
+
+\begin_layout Itemize
+The dot product between to vectors in 
+\begin_inset Formula $\mathbb{R}^{n}$
+\end_inset
+
+ is 
+\begin_inset Formula $x\cdot y=x_{1}y_{1}+\ldots+x_{n}y_{n}.$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+Then 
+\begin_inset Formula $x\cdot y=x^{T}y$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+May use 
+\begin_inset Formula $\mathtt{numpy.dot(x,y)}$
+\end_inset
+
+ or 
+\begin_inset Formula $\mathtt{x.dot(y)}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Verbatim
+>>> x = np.array([2,2,1])
+\end_layout
+
+\begin_layout Verbatim
+>>> y = np.array([1,3,3])
+\end_layout
+
+\begin_layout Verbatim
+>>> x.dot(y) # 2 * 1 + 2 * 3 + 1 * 3
+\end_layout
+
+\begin_layout Verbatim
+11
+\end_layout
+
+\begin_layout Verbatim
+>>> x.T @ y
+\end_layout
+
+\begin_layout Verbatim
+11
+\end_layout
+
+\begin_layout Verbatim
+>>> x @ y # Works because Python is kind.
+\end_layout
+
+\begin_layout Verbatim
+11
+\end_layout
+
+\end_body
+\end_document

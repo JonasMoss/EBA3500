@@ -1,0 +1,32 @@
+# Confidence intervals
+
+## Curriculum
+
+### Core readings
+Dekking et al., Chapter 23: Confidence intervals for the mean 
+
+Dekking et al., Chapter 24: More on confidence intervals 
+
+#### Scipy functions
+* https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.bootstrap.html
+* https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.zscore.html
+* https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_rel.html
+* https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html
+
+## Exercises
+
+### Theory exercises
+Dekking et al., Chapter 23: 23.1, 23.2, 23.3, 23.4, 23.6, 23.11, 23.12
+
+### Python exercises
+Solve the following exercises using Python. In both exercises you are asked to construct a bootstrap interval using the provided data, but you should use the *t*-test too.
+Dekking et al., Chapter 23: 23.5(a,b), 23.9
+
+*A1:* Make your own custom function `tinterval(data, alpha)` that constructs a confidence interval for the mean with confidence level $1-\alpha$. Assume the data are normally distributed.
+*A2:* Make your own custom function `bootinterval(data, alpha, rng)` that constructs are bootstrap percentile confidence interval with confidence level $1-\alpha$ based on the random number generator $rng$.
+
+### Simulation exercises
+
+## Additional resources
+Dekking et al., Chapter 24 covers confidence intervals for different quantities than
+the mean. This chapter is not part of the curriculum but is still worth reading.

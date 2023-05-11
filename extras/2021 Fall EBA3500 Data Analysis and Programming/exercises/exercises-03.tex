@@ -1,0 +1,154 @@
+%% LyX 2.3.6.1 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=4cm,bmargin=4cm,lmargin=4cm,rmargin=4cm}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage[unicode=true]
+ {hyperref}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+\newenvironment{lyxcode}
+	{\par\begin{list}{}{
+		\setlength{\rightmargin}{\leftmargin}
+		\setlength{\listparindent}{0pt}% needed for AMS classes
+		\raggedright
+		\setlength{\itemsep}{0pt}
+		\setlength{\parsep}{0pt}
+		\normalfont\ttfamily}%
+	 \item[]}
+	{\end{list}}
+
+\makeatother
+
+\begin{document}
+\title{EBA3500 Fall 2021 \\
+Exercises 3: Inference, transformations, and correlation}
+\author{Jonas Moss}
+\maketitle
+
+\section{Inference}
+
+How do you define a \emph{p}-value, and how do you use them in regression?
+
+\section{$R^{2}$ and the correlation}
+
+\subsection*{a) The $R^{2}$ in least absolute deviations regression}
+
+Make a function $\mathtt{rsq\_lad}$ that calculates the $R^{2}$
+for least absolute deviations ($R_{lad}^{2}$ from now on). Make sure
+to test it up against at least two examples. Is $R_{lad}^{2}$ symmetric,
+i.e., is the $R_{lad}^{2}$ between $y$ and $x$ the same as the
+$R_{lad}^{2}$ between $x$ and $y$?
+
+\emph{Hint}: To avoid bugs due to naming of columns, use $data=pd.DataFrame({'y':y,'x':x})$
+inside the regression function instead of $data=pd.DataFrame([y,x].T)$.
+In very special cases, the progam calculating the least absolute deviations
+will fail to give correct results. You have to return $\mathtt{np.max([0,rsq])}$to
+make the $R^{2}$ correct. (This is equivalent to the slope being
+$0$ and and the intercept equal to the median.) 
+
+\subsection*{b) Anscombe's Quartet}
+
+Anscombe's quartet are four dissimilar datasets with the same correlations
+/ $R^{2}$s using least squares. Load the data and plot it using.
+\begin{lyxcode}
+import~seaborn~as~sns~
+
+sns.set\_theme(style=\textquotedbl ticks\textquotedbl )
+
+df~=~sns.load\_dataset(\textquotedbl anscombe\textquotedbl )
+
+sns.lmplot(x=\textquotedbl x\textquotedbl ,~y=\textquotedbl y\textquotedbl ,~col=\textquotedbl dataset\textquotedbl ,~
+
+hue=\textquotedbl dataset\textquotedbl ,~data=df,~col\_wrap=2,~
+
+ci=None,~palette=\textquotedbl muted\textquotedbl ,~height=4,~scatter\_kws=\{\textquotedbl s\textquotedbl :~50,~\textquotedbl alpha\textquotedbl :~1\})~
+
+plt.show()
+\end{lyxcode}
+Calculate the $R_{lad}^{2}$ values for these four datasets, both
+$R_{lad}^{2}(x,y)$ and $R_{lad}^{2}(y,x)$. Compare the the least
+squares case.
+
+\emph{Hint:} You may want to use (and try to understand) 
+\[
+\mathtt{\text{df.groupby("dataset").apply(lambdaz:rsq\_lad(z["x"],z["y"]))}}
+\]
+
+Be sure to read the hint in (a). Try to reverse the axes of the plot
+using x=\textquotedbl y\textquotedbl , y=\textquotedbl x\textquotedbl{}
+inside sns.lmplot above.
+
+\subsection*{c) Correlation using least absolute deviations}
+
+Using the equivalent definition of the correlation (for least squares)
+in the slides, propose a definition of the correlation for least absolute
+deviations. Make a Python function that calculates this ``LAD-correlation''.
+\begin{lyxcode}
+\end{lyxcode}
+
+\section{Non-linear least squares}
+
+\subsection{Estimator--plotter function}
+
+Make the following function:
+\begin{lyxcode}
+nls\_plotter(x,~y,~func):
+
+''{}''{}''Estimate~the~parameters~of~func~(as~in~curve\_fit)~
+
+using~non-linear~least~squares.~Make~a~scatterplot~of
+
+x~and~y~and~add~the~curve~defined~by~func~using~the~estimated
+
+parameters.~Return~the~non-linear~R~squared.''{}''{}''
+\end{lyxcode}
+\emph{Hint:} You may use $\mathtt{*params}$ to \href{https://docs.python.org/3/tutorial/controlflow.html\#unpacking-argument-lists}{unpack arguments}.
+
+\subsection{Four parameterized functions}
+
+Make the following functions in Python. Make sure they are compatible
+with $\mathtt{curve\_fit}$. See \href{https://sites.ualberta.ca/~lkgray/uploads/7/3/6/2/7362679/slides_-_nonlinearlogisticregression.pdf}{this link for more.}.
+
+\begin{eqnarray*}
+\frac{a}{1+b^{(x-c)}}+d &  & \textrm{(Logistic curve)}\\
+a+\frac{b}{x+c} &  & \textrm{(Hyperbolic curve)}\\
+a+bx^{c} &  & \textrm{(Logarithmic curve)}\\
+a+bc^{x} &  & \textrm{(Exponential curve)}
+\end{eqnarray*}
+
+
+\subsection{4-plotter}
+
+Make a plotting function $\mathtt{grid\_plotter}$ that makes 4 separate
+plots, one for each of the functions above, in a single window. The
+plot contains a scatterplot of $y$ vs $x$ and adds the non-linear
+least squares fitted curves for one of the functions above. The function
+should return a dictionary with the $R^{2}$ for each of the curves.
+Write a suitable docstring for the function.
+
+\emph{Hint:} Use e.g. \href{https://towardsdatascience.com/master-the-art-of-subplots-in-python-45f7884f3d2e}{this}
+to make a suitable plot.
+
+\subsection{Application}
+
+We will look at the dataset obtained from
+\begin{lyxcode}
+from~rdatasets~import~data~
+
+dataset~=~data(\textquotedbl DNase\textquotedbl )~
+
+dataset~=~dataset{[}dataset{[}'Run'{]}~==~1{]}
+
+x~=~np.log(dataset{[}\textquotedbl conc\textquotedbl{]})~
+
+y~=~dataset{[}\textquotedbl density\textquotedbl{]}
+\end{lyxcode}
+Use the $\mathtt{grid\_plotter}$ function on this data. Which functional
+form fits the data best?
+\end{document}

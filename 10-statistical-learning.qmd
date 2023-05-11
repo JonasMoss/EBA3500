@@ -1,0 +1,14 @@
+# Statistical learning, machine learning, and statistics
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+
+* James et al., Chapter 1: Introduction
+* James et al., Chapter 2: Statistical learning
+
+## Exercises
+
+## Recommended resources

@@ -1,0 +1,438 @@
+---
+title: "Lecture 11: The delta method, quadratic regression, and polynomial regression"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: beige
+    highlight-style: nord
+    slide-number: c/t
+    width: 1440
+    height: 810
+    margin: 0.20
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+---
+
+# Quadratic regression
+
+## Quadratic polynomial
+
+The function $f(x) = c + bx + ax^2$ is called a quadratic function or second-degree polynomial. It takes on four kinds of shapes, depending on the value of $a,b,c$.
+
+```{python}
+#| echo: false
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from itertools import product # We'll see how this works below.
+params = np.array(list(product([-1, 0 ,1], [-1,0,1])))
+x = np.linspace(-3, 3, 100)
+c = 1
+f = lambda x, a, b, c: c + b * x + a * x ** 2
+# Let's plot it now.
+fig, axs = plt.subplots(3, 3)
+for (a, b), (i, j) in zip(params, product(range(3), range(3))):
+  axs[i, j].plot(x, f(x, a, b, c))
+
+```
+
+## Quadratic regression
+
+-   Let the true data generating model be $$Y = \beta_0 + \beta_1X + \beta_2X^2 + \epsilon.$$ This a *quadratic regression model*. It can be regarded as a kind of non-linear regression model, but it usually isn't.
+
+-   Define $X_1 = X$ and $X_2 = X^2$. Then $$\beta_0 + \beta_1X + \beta_2X^2 = \beta_0 + \beta_1X_1 + \beta_2X_2,$$ which implies that the quadratic regression model is actually a multiple linear regression model!
+
+-   Why do we care? Because linear regression is much easier to compute than non-linear regression!
+
+## Is this a good idea?
+
+1.  Quadratic functions have a very specific shape.
+2.  But few natural phenomena adhere to this shape -- except if you know they do (physics!)
+3.  Often used by social scientists when data isn't completely linear. And if the relationsship between y and x isn't linear, a quadratic regression will always fit better in terms of e.g. the $R^2$.
+4.  Sometimes relationsships "flatten out", and the quadratic curve will give a wrong impression.
+
+## An example
+
+> Five studies examined the relationship between talent and team performance. Two survey studies found that people believe there is a linear and nearly monotonic relationship between talent and performance: Participants expected that more talent improves performance and that this relationship never turns negative. However, building off research on status conflicts, we predicted that talent facilitates performance---but only up to a point, after which the benefits of more talent decrease and eventually become detrimental as intrateam coordination suffers. (Swaab et al., 2014)
+
+::: fragment
+So the authors claim there is no increasing relationsship between talent and performance at the top level. That seems plausible considering e.g. Martin Ødegaard!
+:::
+
+::: fragment
+They did four studies, as is common in psychology, and we will look at one of the football studies. Have a look at the paper for more details.
+:::
+
+## 
+
+```{python}
+url = "https://gist.githubusercontent.com/JonasMoss/ae5436bf951da5b3e723ce6fec39e77f/raw/03148a170130686d95f020b81e27bc14b35705ff/talent.csv"
+talent = pd.read_csv(url)
+sns.lmplot(x = "talent", y = "points", data = talent)
+```
+
+::: fragment
+The data is evidently not linear. So let's try the logarithmic transform.
+:::
+
+## 
+
+```{python}
+talent["log_talent"] = np.log(talent["talent"] + 1)
+sns.lmplot(x = "log_talent", y = "points", data = talent)
+```
+
+::: fragment
+This loooks quite linear!
+:::
+
+## 
+
+```{python}
+import statsmodels.formula.api as smf
+fit = smf.ols(formula = 'points ~ np.log(talent + 1)', data=talent).fit()
+print(fit.summary())
+```
+
+## 
+
+::: fragment
+```{python}
+#| echo: false
+sns.lmplot(x = "talent", y = "points", data = talent, order = 2)
+```
+:::
+
+::: fragment
+The fitted function is "U-shaped". It appears that `points` first increases in `talent`, then decreases. At least when you look at the fitted curve!
+:::
+
+## 
+
+```{python}
+fit = smf.ols(formula = 'points ~ talent + I(talent ** 2)', data=talent).fit()
+print(fit.summary())
+```
+
+-   Not surprisingly, the quadratic model has a smaller $R^2$ ($0.466$) than the log-linear model ($0.566$). Along with just looking at the data, this provides evidence that there is no "U-shape" between talent and performance, but an increasing relationsship. Just as you'd expect!
+
+## Moral of the story
+
+1.  Always look at the data. If it doesn't look like it supports your hypothesis, it probably does not.
+2.  Try out different models, some might fit much better the others.
+3.  Do not blindly trust the qualitative consequences of models. Even if the quadratic model had a better fit than the log-model, it wouldn't provide strong evidence for a U-shape -- for a quadratic curve *must* be U-shaped!
+4.  Even when $X$ is univariate, it's often hard to find regression functions that fits the data better than a log-transform or just an ordinary linear regression.
+5.  But quadratic regressions are fine if you only want to predict stuff!
+
+# Modelling complicated univariate functions
+
+## 
+
+::: fragment
+How can you model non-linear relationsships? Not all functions are closely approximated by linears, e.g., `np.sin(2 * np.pi * x) * x * np.exp(x)`.
+:::
+
+::: fragment
+```{python}
+#| echo: false
+#| fig-align: center
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(seed = 313)
+x = np.linspace(0, 3, 100)
+trues = np.sin(2 * np.pi * x) * x * np.exp(x)
+y = trues + rng.normal(0, 3, 100)
+plt.plot(x,trues, color = "red")
+plt.scatter(x, y)
+plt.show()
+```
+:::
+
+## Polynomial regression
+
+-   **Stone--Weierstrass theorem.** Any continuous function can be approximated uniformly by polynomials.
+-   A $k$th degree polynomial is $f(x)=a_{0}+a_{1}x+a_{2}x^{2}+\ldots+a_{k}x^{k}$.
+-   **Idea:** Fit polynomials to the data and select the order based on e.g. AIC.
+
+## Doing this in practice
+
+-   You can use the `np.vander` function to construct design matrices consisting of polynomials.
+
+::: fragment
+```{python}
+def fit_model(deg):
+  formula = "y ~ np.vander(x, " + str(deg) + ", increasing = True)-1"
+  return smf.ols(formula, data = pd.DataFrame({"x" :x, "y":y})).fit()
+```
+:::
+
+-   Then we can fit $k$th degree polynomials!
+
+::: fragment
+```{python}
+[(deg, fit_model(deg).aic) for deg in range(5, 16)]
+```
+:::
+
+## Plotting this
+
+```{python}
+#| echo: false
+#| fig-align: center
+plt.rcParams["figure.figsize"] = (17, 10)
+plt.plot(x, trues, color = "black", linewidth=0.5)
+plt.scatter(x, y, s = 0.3, color = "black")
+plt.ylim(-50, 25)
+
+for deg in [5, 7, 11, 18]:
+  formula = "y ~ np.vander(x, " + str(deg) + ", increasing = True)-1"
+  model = smf.ols(formula, data = pd.DataFrame({"x" :x, "y":y})).fit()
+  plt.plot(x, model.predict())
+  
+plt.legend(["true", "data", 5, 7, 11, 18])
+
+plt.show()
+```
+
+## Regression splines
+
+-   Another option is *splines*.
+
+-   They are piecewise polynomials glued together.
+
+-   Just like polynomials, any function can be approximated by splines if the degree of freedom is high enough!
+
+-   You can create spline bases using the `bs` function from `patsy`, e.g., `y ~ bs(x, df = 5, degree = 3)`. The degree corresponds to the degree of the polynomial, three being the common option.
+
+-   Details are not on the curriculum -- but you should know that splines \> polynomials for modeling of arbitrary shapes!
+
+-   Take a look at [this video](https://www.youtube.com/watch?v=EKDsH1uQing&ab_channel=MikkoR%C3%B6nkk%C3%B6) for more information.
+
+## 
+
+[![](https://patsy.readthedocs.io/en/latest/_images/basis-bspline.png){fig-alt="Splines from patsy documentation."}](https://patsy.readthedocs.io/en/latest)
+
+## Using binary regression
+
+We have already modelled this:
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+x = np.linspace(0, 3, 100)
+trues = np.sin(2 * np.pi * x) * x * np.exp(x)
+y = trues + rng.normal(0, 3, 100)
+```
+
+::: fragment
+But how about this?
+
+```{python}
+z = 1 * (trues > 0)
+```
+:::
+
+## Plotting splines
+
+Define a fitter function for the desired degrees of freedom:
+
+```{python}
+def fit_model(df):
+  formula = "z ~ bs(x, degree = 3, " + "df = " + str(df) + ")"
+  return smf.logit(formula, data = pd.DataFrame({"x" :x, "z":z})).fit()
+```
+
+::: fragment
+```{python}
+print(fit_model(5).summary())
+```
+:::
+
+## On the regression data
+
+```{python}
+def fit_model(df):
+  formula = "y ~ bs(x, degree = 3, " + "df = " + str(df) + ")"
+  return smf.ols(formula, data = pd.DataFrame({"x" :x, "y":y})).fit()
+[(df, fit_model(df).aic) for df in range(3, 16)]
+```
+
+## 
+
+```{python}
+#| echo: false
+#| fig-align: center
+plt.rcParams["figure.figsize"] = (17, 10)
+plt.plot(x, trues, color = "black", linewidth=0.5)
+plt.scatter(x, y, s = 0.3, color = "black")
+plt.ylim(-50, 25)
+
+for deg in [5, 7, 13, 18]:
+  model = fit_model(deg)
+  plt.plot(x, model.predict())
+  
+plt.legend(["true", "data", 5, 7, 13, 18])
+
+plt.show()
+```
+
+# The delta method
+
+## The problem
+
+-   Let $x_1, x_2, x_3, \ldots, x_m$ be iid Bernoulli with some unknown $p$.
+
+-   We can estimate $p$ using $\overline{x}$. Its variance is $p(1-p)/n$.
+
+-   But what happens if we need to estimate the odds $p/(1-p)$ instead of $p$? What's the variance then?
+
+## The delta method
+
+Let $g$ be a differentiable function and
+
+$$
+\sqrt{n}(\hat{\theta}_n -\theta)\stackrel{d}{\to}N(0,\sigma^2)
+$$
+
+where $\sigma^2$ is the asymptotic variance. Then
+
+$$
+\sqrt{n}(g(\hat{\theta}_n) -g(\theta))\stackrel{d}{\to}N(0,[g'(\theta)]^2\sigma^2)
+$$
+
+## Solving the problem
+
+-   In our case $g(p)=p/(1-p)$.
+
+-   Its derivative is $1/(1-p)^2$. (Found using the quotient rule.)
+
+-   Recall that the asymptotic variance of $\overline{x}$ (i.e., variance of $\sqrt{n}(\overline{x}-p)$ ) is $\sigma^2 = p(1-p)$.
+
+-   Thus $g'(p)^2\sigma^2=p(1-p)/(1-p)^4=p/(1-p)^3$.
+
+-   Hence the variance of the estimated odds is $\overline{x}/(1-\overline{x})$ is $p/(1-p)^3/n$
+
+## Applications
+
+-   Suppose $X$ has variance $\sigma^2$ and unknown mean $\mu$. How can we estimate $\mu^2$ and what is its asymptotic variance?
+
+    -   Answer: We use $\overline{x}^2$. The derivative of $g(x)=x^2$ is $g'(x)=2x$, hence $g'(x)^2 = 4x^2$. It follows from the delta method that the variance is $4\mu^2\sigma^2/n$.
+
+-   Suppose $\hat{\beta}_1$ is a regression coefficient from the logistic model. What is the asymptotic variance of $\exp{\hat{\beta}_1}$?
+
+  -   Answer: Recall that the entire parameter vector $\hat{\beta}$ has covariance matrix equal to the inverse of the Fisher information $I^{-1}$, hence the variance of $\hat{\beta}_i$ is the $i$th diagonal element of $I^{-1}$. Now apply the delta method to $g(x)=\exp(x)$, yielding $(g'(x))^2 = \exp(2x)$. Hence the asymptotic variance of $\exp{\hat{\beta}_1}$ is $\exp(2\beta_1)I^{-1}_{ii}$.
+
+## Gradients
+
+-   Recall that the gradient of function $g:\mathbb{R}^k\to\mathbb{R}$ is $$\nabla g(\theta)=\left[\begin{array}{cccc} \frac{\partial g}{\partial\theta_{1}} & \frac{\partial g}{\partial\theta_{2}} & \cdots & \frac{\partial g}{\partial\theta_{k}}\end{array}\right]$$
+
+-   **Example.** Consider the function $$g(\theta)=\theta_{1}^{2}+\theta_{2}^{2}+\theta_{3}^{2}$$
+
+-   The gradient is $$\nabla g(\theta)=\left[\begin{array}{c}
+    \frac{\partial g}{\partial\theta_{1}}\\
+    \frac{\partial g}{\partial\theta_{2}}\\
+    \frac{\partial g}{\partial\theta_{k}}
+    \end{array}\right]=2\left[\begin{array}{c}
+    \theta_{1}\\
+    \theta_{2}\\
+    \theta_{3}
+    \end{array}\right]$$
+
+## Delta method with vectors
+
+Assume that $\theta$ is a vector and $$\sqrt{n}(\hat{\theta}-\theta)\stackrel{d}{\to}N(0,\Sigma).$$ The matrix $\Sigma$ is the *asymptotic covariance matrix.*
+
+::: fragment
+$$\sqrt{n}(g(\hat{\theta})-g(\theta))\stackrel{d}{\to}N(0,\nabla g(\theta)^{T}\Sigma\nabla g(\theta))$$
+:::
+
+## Applications
+
+-   **Question:** Remember what the asymptotic covariance of the regression coefficients in a binary regression model is?
+    -   **Answer:** It's the inverse Fisher information: $I^{-1}(\beta)$! You can find the estimated covariance matrix using `cov_params()`.
+-   **Question:** How would you find the asymptotic covariance matrix of $\hat{\theta} = \sum_{i=1}^p \hat{\beta}_i^2$, where $\hat{\beta}_i$ are the estimated coefficients from a logistic regression model?
+    -   **Answer:** Use the delta method together with the inverse Fisher informatio. The asymptotic covariance matrix can be estimated as `n*model.cov_params()`.
+
+## Inference for the probability in binary regression
+
+-   Recall that $E(Y\mid X) = F(\beta^T X)$ where $F$ is the inverse link function (with derivative $f$). What is the asymptotic variance of $F(\hat{\beta}^TX)$?
+-   Putting $g(\beta)=F(\beta^{T}X)$ we get $$
+    \nabla g(\theta)=f(\beta^{T}X)\left[\begin{array}{c}
+    X_{1}\\
+    X_{2}\\
+    \vdots\\
+    X_{k}
+    \end{array}\right]$$
+-   Hence, if $\Sigma$ is the asymptotic covariance matrix of $\hat{\beta}$, the asymptotic variance of $F(\beta^{T}X)$ is $$\tau = f^2(\beta^{T}X)X^{T}\Sigma X.$$
+-   Again, construct confidence intervals using $F(\hat{\beta}^{T}X) \pm \tau^{1/2} n^{-1/2} \Phi^{-1}(0.975)$
+
+## Admission data
+
+```{python}
+#| fig-align: center
+import pandas as pd
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+admission = pd.read_csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+admission.head()
+```
+
+## Admission data: Summary
+
+```{python}
+model = smf.logit("admit ~ gre + gpa + C(rank)", data = admission).fit()
+print(model.summary())
+```
+
+## Admission data: `cov_params()`
+
+-   We want to estimate the probability of a guy with GRE equal to $700$ and GPA equal to $3.00$ being admitted to a rank 4 college -- and we want a confidence interval for this probability!
+-   The asymptotic covariance matrix is available using `cov_params()`.
+
+::: fragment
+```{python}
+print(model.cov_params())
+```
+:::
+
+## Admission data
+
+-   Since $F(x) = 1/(1+\exp{(-x)})$ in the logistic model, its derivative is $f(x=\exp{(-x)}/(1+\exp{(-x)})^2$.
+
+::: fragment
+```{python}
+import numpy as np
+f = lambda x: np.exp(-x)/(1 + np.exp(-x)) ** 2
+x = np.array([1, 0, 0, 1, 700, 3])
+tau = x @ model.cov_params() @ x * f(x @ model.params) ** 2
+print(tau)
+```
+:::
+
+-   And the 95% confidence interval is, using that $\Phi^{-1}(0.975) \approx 1.96$.
+
+::: fragment
+```{python}
+F = lambda x: 1/(1+np.exp(-x))
+estimate = F(x @ model.params)
+CI = [estimate - np.sqrt(tau) * 1.96, estimate + np.sqrt(tau) * 1.96]
+print(CI)
+```
+:::
+
+

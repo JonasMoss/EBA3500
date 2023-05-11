@@ -1,0 +1,18 @@
+# On the exam{.unnumbered}
+
+Part of the learning outcomes for this course is an ability to do practical problem solving in Python. This involves that you might need to find and use functionality that has not been covered explicitly in the course. *This is by design.* Think about it this way: When you're at work, your tasks will never fit 100% into the mold of a course you have taken. You must do whatever it takes to solve the problem you've been given.
+
+The exam will be a home exam which will cover most topics in the course. 
+
+The course is about two strongly connected topics: Basic statistics and basic machine learning. There are many blog posts and similar literature about the difference between these two, but I mostly think of them as follows:
+
+1. Statistics. About infering the parameters of a model. Used in every scientific field. Is about explanation, not prediction.
+2. Machine learning. Make the best-performing predictive model. 
+
+This course has a heavy emphasis on simulation, both as a tool for understanding concepts and as tool for doing valuable investigations into the behavior of statistical quantities. Expect to do many simulations in the exam.
+
+The topics in the course can be broadly divided into the following:
+
+1. **Simulation using Numpy.** 
+2. **Evaluation of statistical quantities.** This involves simulation of confidence intervals, hypothesis tests, and estimators. This task could involve inventing new estimators from scratch using the mathematical tools we cover.
+3. **Practical data analysis.** Do exploratory data analysis, find a couple of reasonably suitable models, and make an informed choice among them. Use these models to make predictions and evaluate their predictive perfomance

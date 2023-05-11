@@ -1,0 +1,18 @@
+# Exploratory data analysis
+
+## Curriculum
+
+### Core readings
+
+1.  Dekking et al., Chapter 15: Exploratory data analysis: graphical summaries
+2.  Dekking et al., Chapter 16: Exploratory data analysis: numerical summaries
+
+### Python
+
+#### Using `seaborn` for graphical summaries
+
+#### Numpy and scipy for numerica summaries
+
+## Exercises
+
+## Additional resources

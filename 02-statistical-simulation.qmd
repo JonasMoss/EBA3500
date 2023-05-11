@@ -1,0 +1,166 @@
+# Statistical simulation and limit theorems
+
+> For us, there are two reasons to learn about stochastic simulation. The first is that for complex systems, simulation can be an alternative to mathematical analysis, sometimes the only one. The second reason is that through simulation, we can get more feeling for random variables, and this is why we study stochastic simulation at this point in the book. We start by asking how we can generate a realization of a random variable. (Dekking et al., p. 72)
+
+## Curriculum
+
+### Core readings
+
+1.  Dekking et al., Chapter 13: The law of large numbers
+
+2.  Dekking et al., Chapter 14: The central limit theorem
+
+3. The notes below.
+
+4. (*Optional*)Dekking et al., Chapter 6: Simulations. Except Chapter 6.4 The single-server queue.
+
+### Simulation in Python
+
+```{python}
+import numpy as np
+import scipy as sp
+```
+
+#### Random number generators
+We start by defining an random number generator (*rng*). Computers do not usually generate truly random numbers. Instead they generate so-called [pseudo-random numbers](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) using methods such as the [linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator). (It is possible to generate truly random numbers using the [`RDRAND` instruction](https://en.wikipedia.org/wiki/RDRAND) on x64 processors, but this feature is almost never used for various reasons.)
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+rng
+```
+As you can see, the object `rng` is a `Generator(PCG64)`, i.e., a random number generator.
+
+Generator objects have methods, such as `uniform` and `normal`, that may be used to generate random values.
+
+```{python}
+rng.uniform(0, 1, size = 10)
+```
+This code generates a column vector of ten elements randomly sampled from the uniform distribution on $[0,1]$. The `size` argument is a Numpy dimension, hence you can write:
+
+```{python}
+rng.uniform(0, 1, size = (2, 10))
+```
+This is an array with $2$ rows and $10$ columns.
+
+Our generator `rng` was defined using the argument `seed = 313`. This is used for *reproducibility*. If you run the same code twice with the same seed, the result is going to be the same.
+
+```{python}
+rng1 = np.random.default_rng(seed = 313)
+rng2 = np.random.default_rng(seed = 313)
+rng1.uniform(0, 1, size = (2, 2))
+rng2.uniform(0, 1, size = (2, 2))
+```
+But the results will not be the same if we do not provide the seed!
+```{python}
+rng1 = np.random.default_rng()
+rng2 = np.random.default_rng()
+rng1.uniform(0, 1, size = (2, 2))
+rng2.uniform(0, 1, size = (2, 2))
+```
+
+Reproducibility is important in scientific applications, as the reader of your work can exactly reproduce your simulations on his own computer. It's also relevant for our coursework, as it allows your teacher to automatically grade your submissions.
+
+The first two arguments of `rng.uniform` specify the start point and end point of the interval we sample from.
+
+```{python}
+rng1 = np.random.default_rng(seed = 313)
+rng2 = np.random.default_rng(seed = 313)
+x = rng1.uniform(2, 5, size = (2, 2)) # starting at 2 and ending at 5,
+y = rng2.uniform(0, 1, size = (2, 2)) # starting at 0 and ending at 1.
+
+x
+3*y + 2
+```
+
+Now $x$ and $y$ are the same. This will always be the case.
+
+##### Quick exercise
+
+Generate an array of uniformly distributed numbers on $[1,5]$ with $3$ rows and $4$ columns.
+
+#### Using distributions
+
+The Generator object supports random sampling from many distributions. See [the documenation](https://numpy.org/doc/stable/reference/random/generator.html#distributions) for a complete list.
+
+For instance, you can generate normally distributed random values (with mean `mu` and standard deviation `sigma`) using `rng.normal(mu, sigma, size)`. Again, the `size` argument tells `numpy` how many rows, columns and potentially more dimensions you want your array to have.
+
+| Function   | Distribution | 
+| --------   | ------------ |
+| `integers` | Random integers from low (inclusive) to high (exclusive).
+| `choice`   | Sample from an array with or without replacement.
+| `uniform`  | Uniformly distributed numbers.
+| `random`   | Uniformly distributed numbers on `[0,1]`.
+| `normal`   | Normally distributed numbers.
+| `standard_normal` | Normally distributed numbers with mean 0 and standard deviation 1.
+| `exponential` | Exponentially distributed numbers with scale parameter.
+| `standard_exponential` | Exponentially distributed numbers with scale parameter 1.
+
+### Simulating dice throws
+
+Random number generators are often used to calculate probabilities that are hard to calculate by hand. You might be able to calculate, say, what he probability of getting a sum equal to $7$ is when throwing 2 dice. But what about the probability that the maximal value $6$ or that the sum is $7$? This is also doable by hand, but it's easier to do it by machine.
+
+To simulate this probability, we'll sample a lot of dice throws.
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+throws = rng.integers(1, 7, size = (10000, 2))
+# throws contaisn 10000 rows of two dice throws.
+totals = throws.sum(axis = 1)
+maxs = throws.max(axis = 1)
+totals
+maxs
+```
+To calculate our probability, we need either `totals == 7` or `maxs == 6`.
+
+```{python}
+totals == 7
+maxs == 6
+```
+We can use vectorized "OR" using the Numpy function `logical_or`.
+```{python}
+x = np.logical_or(totals == 7, maxs == 6)
+x
+```
+Then we can take their mean to figure out the probability.
+```{python}
+x.mean()
+```
+Thus the probability is approximately $0.41$. (Observe that Numpy automatically interprets `True` as `1` and `False` as `0` when forced to interpret boolean values as integers.)
+
+In practice, we would write all of this in one go, probably using a function.
+
+```{python}
+def prob(rng, n_reps = 10000):
+  throws = rng.integers(1, 7, size = (10000, 2))
+  return np.logical_or(throws.sum(axis = 1) == 7, throws.max(axis = 1) == 6).mean()
+  
+prob(rng)
+```
+The result of this simulation is slightly different from the last one. This is due to randomnes, pure and simple. As we have already generated values from our `rng`, we would have to reset it to get the same value as before.
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+prob(rng)
+```
+### Simulating complicated dice throws
+
+Suppose you throw 6 dice and want to figure out the probability distribution of their sums. 
+
+```{python}
+def prob(rng, n_reps = 10000):
+  throws = rng.integers(1, 7, size = (10000, 2))
+  return np.logical_or(throws.sum(axis = 1) == 7, throws.max(axis = 1) == 6).mean()
+  
+prob(rng)
+```
+
+### Simulating from distributions
+Suppose that $X_1,X_2,\ldots,X_k$ are $k$ iid exponential variables with density $\lambda e^{-\lambda x}, \lambda > 0$. It has been claimed that the minimum of $k$ such variables are exponentially distributed with parameter $k \lambda$, i.e., $\min(X_1,X_2,\ldots,X_k)$ has density $\lambda k e^{-\lambda k x}$. Let's try to verify this using simulations.
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+
+```
+## Exercises
+
+## Additional resources

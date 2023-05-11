@@ -1,0 +1,360 @@
+---
+title: "Lecture 9: Binary regression (ii)"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: beige
+    highlight-style: nord
+    slide-number: c/t
+    width: 1440
+    height: 810
+    margin: 0.20
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+---
+
+```{python}
+#| echo: false
+from tabulate import tabulate
+import statsmodels.formula.api as smf
+import numpy as np
+import pandas as pd
+admission = pd.read_csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+```
+
+# Interpreting the coefficients
+
+## Two approaches
+
+1.  The latent variable interpretation. Somewhat abstract, but simple enough.
+
+::: fragment
+::: callout-note
+1.  Regression model: $Z_{i}=\beta^{T}X_{i}+\epsilon_{i}$
+2.  But $Z_i$ is not observed - it is latent.
+3.  We observe $Y_i = 1[Z_i \geq 0]$ instead.
+:::
+:::
+
+2.  The odds-ratio and approximate relative risk approach. Only for logistic regression though!
+
+## The odds
+
+-   Let $p = P(Y=1)$. Recall that $P(Y=1) = F(\beta^T X)$ in a binary regression model.
+-   The *odds* for an event with probability $p$ is defined as $\text{odds} = p/(1-p)$.
+-   In logistic regression, $p = \frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}$.
+-   Hence the odds are $$\frac{\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}}{1-\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}} = \frac{\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}}{\frac{1}{1+\exp[\beta^{T}x]}} = \exp[\beta^Tx].$$
+
+## The odds-ratio
+
+-   Let $p$ and $q$ be two probabilities. The *odds-ratio* is the ratio of odds with probabilities $p$ and $q$. $$\text{OR} = \frac{p/(1-p)}{q/(1-q)}.$$
+-   In the logistic regression model, the odds-ratio between two covariates $x'$ (for $p$) and $x$ (for $q$) is $$\frac{p/(1-p)}{q/(1-q)} = \frac{\exp[\beta^Tx']}{\exp[\beta^Tx]} = \exp{[\beta^T(x'-x)]}.$$
+-   Now suppose that $x' = x$ everywhere except on the $j$th coordinate, where it equals $x+1$. Then $\beta^T(x'-x) = \beta_j$.
+
+## The log-odds and relative risk
+
+-   From the equation for the odds-ratio we find that $$\frac{p/(1-p)}{q/(1-q)} = \exp{[\beta^T(x'-x)] = \exp{[-\beta_j]}}.$$
+-   Hence the logarithm of the odds-ratio equals $\beta_j$!
+-   The *relative risk* of two events is $\text{RR} = p/q$. How much more probable is $Y$ under $x'$ than $Y$ under $x$? *Much* easier to interpret than the odds ratio.
+-   When $p,q$ are small, the odds ratio approximates the relative risk.
+-   So when the probabilities are small, $\exp{[\beta_j]\approx \text{RR}}$ of increasing the value of $x_j$ by $1$.
+
+## Example
+
+```{python}
+mod = smf.probit("admit ~ gre + gpa + rank", data=admission).fit()
+```
+
+To intepret the coefficients we must exponentiate them.
+
+```{python}
+np.exp(mod.params)
+```
+
+Hence increasing `gpa` with 1 increases the probability of being admitted by $60\%$, everything else held equal. Increasing the rank of the university by one decreases the probability by $30\%$ though.
+
+# Asymptotic theory for maximum likelihood
+
+## ![The multivariate normal. Source: Wikipedia](images/Multivariate_Gaussian.png)
+
+## The multivariate normal
+
+$$f(\boldsymbol{x};\boldsymbol{\mu},\Sigma)=\frac{\exp\left(-\frac{1}{2}\left(\boldsymbol{x}-\boldsymbol{\mu}\right)^{T}\Sigma^{-1}\left(\boldsymbol{x}-\boldsymbol{\mu}\right)\right)}{\sqrt{(2\pi)^{k}|\Sigma|}}$$
+
+-   $\boldsymbol{x}\in\mathbb{R}^k$ is the vector of observations
+
+-   $\Sigma$ is the $k\times k$ covariance matrix.
+
+-   $\boldsymbol{\mu}\in\mathbb{R}^k$ is the vector of means. \* $|A|$ denotes the determinant of $A$.
+
+## The multivariate central limit theorem
+
+-   Recall that $\sqrt{n}(\overline{x}-\mu) \to N(0, \sigma^2)$, where $\sigma^2 = \operatorname{Var}(X)$ when $x$ is *univariate* and the mean is obtained from iid observations.
+-   When $\boldsymbol{X_1}, \boldsymbol{X_2},\ldots, \boldsymbol{X_k}$ is a sequence of multivariate observations, define its multivariate mean $\boldsymbol{X}$ component-wise, i.e., $\overline{X_{\cdot 1}}, \overline{X_{\cdot 2}}, \ldots, \overline{X_{\cdot k}}$.
+-   Remember that the covariance matrix of a random variable is $E[(X-\mu)(X-\mu)^T]$. It is a positive definite matrix that summarizes the dependence between the variables.
+
+::: fragment
+::: {#thm-line}
+## Multivariate central limit theorem
+
+Let $\boldsymbol{X}\in\mathbb{R}^k$ be multivariate random variable with mean $\mu$ and covariance matrix $\Sigma$. Then $$\sqrt{n}(\overline{\boldsymbol{X}}-\boldsymbol{\mu}) \to N(0, \Sigma)$$
+:::
+:::
+
+## An example
+
+-   Let $U$, $V$, $W$ be independent uniforms. These have means $1/2$ and variances $1/12$.
+-   Define $X_1 = U+V$ and $X_2 = U+V+W$.
+-   Then the (co)variances are:
+    -   $\operatorname{Var}(X_1) = 1/6$
+    -   $\operatorname{Var}(X_2) = 1/4$
+    -   $\operatorname{Cov}(X_1, X_2) = 1/6$
+-   **Question:** What are the means of $X_1$ and $X_2$?
+    -   **Answer:** $1$ and $3/2$.
+-   **Question:** What is the covariance matrix of $\sqrt{n}(\overline{X_1}, \overline{X_2})$ when $n\to\infty$?
+    -   **Answer:** The covariance matrix of $(X_1, X_2)$, by the central limit theorem.
+
+## The Fisher information matrix
+
+-   The *Fisher information* is $$I(\theta)=E\left[\left(\frac{\partial}{\partial\theta}\log f(X;\theta\right)^{2}\mid\theta\right]$$
+-   Almost always equal to $$I(\theta)=-E\left[\frac{\partial^{2}}{\partial\theta^{2}}\log f(X;\theta)\mid\theta\right]$$
+-   Summarizes the information about the parameter contained in one observation.
+
+## Example Fisher information
+
+-   Exponential distribution: $f(x;\theta)=\theta e^{-\theta x}$.
+-   $\log f(x;\theta)=\log\theta-\theta x$
+-   $\frac{\partial}{\partial\theta}\log f(x;\theta)=\frac{1}{\theta}-x$
+-   $\frac{\partial^{2}}{\partial\theta^{2}}\log f(x;\theta)=-\frac{1}{\theta^{2}}$
+-   Hence $I(\theta)=-E\left[\frac{\partial^{2}}{\partial\theta^{2}}\log f(X;\theta)\right]=\frac{1}{\theta^{2}}$.
+
+## The asymptotic distribution of the maximum likelihood estimator
+
+-   If $\theta$ is a vector, the multivariate Fisher information is the matrix with elements $$I(\theta)_{ij} = -E\left[\frac{\partial^{2}}{\partial\theta_i\theta_j}\log f(X;\theta)\mid\theta\right]$$
+
+::: fragment
+::: {#thm-line2}
+## Multivariate central limit theorem
+
+Let $\hat{\theta}$ be a maximum likelihood estimator and $\theta$ be the true parameter value. Then $\hat{\theta}$ is asymptotically normal with limiting variance equal to the inverse Fisher information, i.e., $$\sqrt{n}(\hat{\theta}-\theta) \to N(0, I(\theta)^{-1})$$
+:::
+:::
+
+-   **Question:** Why do we care about this?
+    -   **Answer:** You can construct confidence intervals, hypothesis tests, and you learn how quickly the parameter estimates approach their true values.
+
+## Finding the asymptotic covariance matrix in Python
+
+The estimated covariance matrix of the parameter estimates an be found by calling
+
+::: fragment
+```{python}
+mod.cov_params()
+```
+:::
+
+-   This is approximately equal to $\frac{1}{n}{I^{-1}(\theta)}$, where $\theta$ is the true parameter value.
+-   Don't misinterpret this! It's the covariance of the parameter estimates, not the data itself!
+
+# Perfect separation
+
+## An example contingency table
+
+| Diaphragm use | Urinary tract infection |     |
+|---------------|-------------------------|-----|
+|               | Yes                     | No  |
+| Yes           | 7                       | 0   |
+| No            | 140                     | 290 |
+
+**Model:** $P(\text{Urinary tract infection}) = F(\beta_0+\beta_11[\text{Diaphragm use}]),$ where $F$ is equal to, e.g., the logistic CDF.
+
+-   **What is** $\hat{\beta}_0$?
+    -   Since the maximum likelihood estimator of $\hat{p}$ in a Bernoulli model is the mean, it is $140/(140 + 290) \approx 0.33$.
+-   **What is** $\hat{\beta}_1$?
+    -   This part only invoves "Yes" events! We want to maximize the likelihood, so it's best to make the probability equal to $1$, which implies $\beta_1 = \infty$!
+
+## Perfect separation
+
+![Example of perfect separation](images/Rplot01.png){fig-align="center"}
+
+## Definition
+
+-   Let $X$ be the model matrix, i.e., the matrix of covariates and the intercept.
+-   Define $X_0$ as the submatrix where the outcome is $Y=0$ and $X_1$ the submatrix where $Y=1$.
+
+::: fragment
+::: {#def-qcs}
+A binary regression model is *quasi-perfectly separated* if $\beta^T X_0 \geq 0$ and $\beta^T X_1 \leq 0$.
+:::
+:::
+
+::: fragment
+::: {#thm-qcs}
+The maximum likelihood estimators of a binary regression model are finite if and only the regression model is not quasi-perfectly separated.
+:::
+:::
+
+More detailed explanations can be found [here](https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-complete-or-quasi-complete-separation-in-logistic-regression-and-what-are-some-strategies-to-deal-with-the-issue/).
+
+# Model selection
+
+![](images/coffee-2306471_1920.jpg)
+
+## Example data (i)
+
+```{python}
+#| echo: false
+
+x = np.array([0,	30,	10,	0.33,
+50,	30,	13,	0.43,
+100,	30,	17,	0.57,
+150,	30,	15,	0.50,
+200,	30,	10,	0.33,
+250,	30,	5,	0.17,
+300,	30,	4,	0.13,
+350,	30,	3,	0.10,
+400,	30,	3,	0.10,
+450,	30,	1,	0.03,
+500,	30,	0,	0]).reshape(11, 4)
+data = pd.DataFrame.from_records(x)
+data.rename(columns = {0: "caffeine", 1: "n", 2:"a", 3:"prob"}, inplace = True)
+```
+
+```{python}
+#| echo: false
+data.head()
+```
+
+> A researcher wishes to know if caffeine improves performance on a memory test. Volunteers consume different amounts of caffeine from 0 to 500 mg, and their score on the memory test is recorded. [*Source.*](https://en.wikipedia.org/wiki/Hosmer%E2%80%93Lemeshow_test)
+
+## Example data (ii)
+
+```{python}
+#| echo: false
+data.head()
+```
+
+-   This data is on a different form than usual! We have `n` giving us the number of observations with the given covariate levels and `a` the numbe who got an A!
+-   This can be called a *binomial* regression model. It's equivalent to binary regression models, but with a more compact representation.
+
+## Fitting the model
+
+```{python}
+import statsmodels.api as sm
+model = smf.glm("a + I(n - a) ~ caffeine", family=sm.families.Binomial(), data=data).fit()
+model.params
+```
+
+## Is the model good?
+
+```{python}
+#| fig-align: center
+import matplotlib.pyplot as plt
+logistic = lambda x: np.log(x) - np.log(1-x)
+plt.plot(data.caffeine, logistic(model.predict()))
+plt.scatter(data.caffeine, logistic(data.prob))
+```
+
+-   **Question:** What's going on here?
+    -   There seems to be a $U$-shape! Some caffeine is good, but more is bad.
+
+## How well does it fit?
+
+```{python}
+plt.scatter(model.predict(), data.prob)
+plt.plot([0,0.6], [0, 0.6])
+```
+
+-   These points should, ideally, match the straight line!
+-   But is the discrepancy just due to uncertainty?
+
+## Trying another model: Adding a log term.
+
+```{python}
+model_log = smf.glm(
+  "a + I(n - a) ~ caffeine + np.log(caffeine + 1)", 
+  family=sm.families.Binomial(), 
+  data=data).fit()
+plt.scatter(model_log.predict(), data.prob, color = "blue")
+plt.scatter(model.predict(), data.prob, color = "red")
+plt.plot([0,0.6], [0, 0.6])
+```
+
+## What does it predict?
+
+```{python}
+#| echo: false
+#| fig-align: center
+plt.plot(data.caffeine, logistic(model.predict()), color = "red")
+plt.plot(data.caffeine, logistic(model_log.predict()), color = "blue")
+plt.scatter(data.caffeine, logistic(data.prob))
+```
+
+-   **Question:** It looks like the model with the log term fits the data better! But what might go wrong?
+    -   **Answer:** Maybe it's just noise! Maybe the low-caffeine observations are too low, or the the medium-caffeine observations too high.
+
+## The AIC: Definition
+
+-   Akaike's information criterion (AIC), defined as $$\text{AIC} = 2p - 2l,$$ where $p$ is the number of estimated parameters and $l$ is the log-likelihood at the estimated parameters.
+-   **The smaller the AIC the better!**
+-   We add $2p$ since a larger number of parameters allows for more noise. It *penalizes model complexity*.
+-   Penalization of model complexity is always needed when comparing model with different number of parameters!
+-   There is a theoretical argument for the choice $p$! but that is beyond the scope of this course.
+
+## The AIC: Application
+
+```{python}
+model.aic
+```
+
+```{python}
+model_log.aic
+```
+
+-   Hence the logarithm term is worth it. This is a large reduction in AIC; you'll get an intuition about this after a while.
+-   Key take-away: Drinking some coffee will help your grades!
+
+## The AIC: Why and when?
+
+-   **Question:** Why use the AIC?
+    -   It is simple, it is well-known, and it performs well.
+-   You *can* compare AIC across different models!
+
+```{python}
+model_log_probit = smf.glm(
+  "a + I(n - a) ~ caffeine + np.log(caffeine + 1)", 
+  family=sm.families.Binomial(sm.genmod.families.links.probit()), 
+  data=data).fit()
+model_log_cauchit = smf.glm(
+  "a + I(n - a) ~ caffeine + np.log(caffeine + 1)", 
+  family=sm.families.Binomial(sm.genmod.families.links.cauchy()), 
+  data=data).fit()
+model_log_cloglog = smf.glm(
+  "a + I(n - a) ~ caffeine + np.log(caffeine + 1)", 
+  family=sm.families.Binomial(sm.genmod.families.links.cloglog()), 
+  data=data).fit()  
+{"logit" : model_log.aic, "probit" : model_log_probit.aic, "cauchit" : model_log_cauchit.aic, "cloglog":  model_log_cloglog.aic}
+```
+
+# Summary
+
+## Summary part 1
+
+1.  The parameters of a logistic regression model can be interpreted as the log-odds-ratio. The log-odds-ratio approximates the relative risk.
+2.  Under general conditions, the asymptotic distribution of a maximum likelihood estimator $\hat{\theta}$ is $\sqrt{n}\left(\hat{\theta}-\theta\right)\to N(0,I(\theta)^{-1})$, where $I(\theta)$ is the Fisher information matrix.
+3.  We can use this to calculate confidence intervals and construct hypothesis tests for the parameters of a binary regression model.
+4.  The maximum likelihood estimates $\hat{\theta}$ of a binary regression model are finite if and only if the data isn't quasi-perfectly separated.
+5.  Akaike's information criterion (AIC) can be used to compare models with different covariates or link functions.

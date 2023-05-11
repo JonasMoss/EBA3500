@@ -1,0 +1,910 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Concepts and coding
+\end_layout
+
+\begin_layout Subsubsection*
+(a)
+\end_layout
+
+\begin_layout Standard
+What's the output when calling the following commands, and why? Write one
+ sentence for each question.
+\end_layout
+
+\begin_layout Standard
+What's the output when calling the following commands, and why? Write one
+ sentence for each question.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\texttt{np.mean([1, 2, 3])}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\texttt{np.array([1, 2, 3])+1}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\texttt{np.zeros(10)}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+(b)
+\end_layout
+
+\begin_layout Standard
+Consider the following function.
+ 
+\end_layout
+
+\begin_layout Verbatim
+	def fun(x):     
+\end_layout
+
+\begin_layout Verbatim
+		
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ Takes a numpy array as an input...
+ 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+       
+\end_layout
+
+\begin_layout Verbatim
+		for i in range(len(x) - 1):         
+\end_layout
+
+\begin_layout Verbatim
+			x[i + 1] = 1 + x[i]     
+\end_layout
+
+\begin_layout Verbatim
+		return(x)
+\end_layout
+
+\begin_layout Enumerate
+What does this function do? Explain using two sentences.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\texttt{numpy}$
+\end_inset
+
+ contains a function that does exactly the same.
+ What is its name?
+\end_layout
+
+\begin_layout Subsubsection*
+(c)
+\end_layout
+
+\begin_layout Enumerate
+Why does 
+\begin_inset Formula $\texttt{np.random.default\_rng(seed = 313).random(10)}$
+\end_inset
+
+return the same vector every time you run it?
+\end_layout
+
+\begin_layout Enumerate
+How can you modify to return a different vector?
+\end_layout
+
+\begin_layout Subsection*
+(d)
+\end_layout
+
+\begin_layout Standard
+Consider the code 
+\begin_inset Formula $\texttt{np.array([1, 2, 3]) + [1, 2, 3]}.$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Enumerate
+What happens when you run this code? Write one sentence.
+\end_layout
+
+\begin_layout Enumerate
+What happens when you run 
+\begin_inset Formula $\texttt{[1, 2, 3] + [1, 2, 3]}$
+\end_inset
+
+? Why does this happen? Write one sentence.
+\end_layout
+
+\begin_layout Enumerate
+Name three other operations that behaves like
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\texttt{"*"}$
+\end_inset
+
+ does above.
+\end_layout
+
+\begin_layout Section
+Random walks
+\end_layout
+
+\begin_layout Standard
+We'll take a close look at some code from one of the videos.
+ 
+\end_layout
+
+\begin_layout Verbatim
+    import numpy as np
+\end_layout
+
+\begin_layout Verbatim
+	n_reps = 10 ** 5
+\end_layout
+
+\begin_layout Verbatim
+	n = 100
+\end_layout
+
+\begin_layout Verbatim
+	rng = np.random.default_rng(seed = 313)
+\end_layout
+
+\begin_layout Standard
+We will study a function from video 2 on random walks.
+\end_layout
+
+\begin_layout Verbatim
+	def fun(n, rng, n_reps = 10 ** 5):
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+    	bs = np.apply_along_axis(
+\end_layout
+
+\begin_layout Verbatim
+       	 func1d = np.cumsum, 
+\end_layout
+
+\begin_layout Verbatim
+        	axis = 1, 
+\end_layout
+
+\begin_layout Verbatim
+       	 arr = rng.integers(low = -1, high = 2, size = (n_reps, n)))
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+    	results = np.apply_along_axis(
+\end_layout
+
+\begin_layout Verbatim
+       	 func1d = np.max, 
+\end_layout
+
+\begin_layout Verbatim
+        	axis = 1, 
+\end_layout
+
+\begin_layout Verbatim
+        	arr = bs)     
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Verbatim
+    	uniques, counts = np.unique(results, return_counts = True)
+\end_layout
+
+\begin_layout Verbatim
+    	return {"result" : uniques, "probability" : counts / n_reps}
+\end_layout
+
+\begin_layout Verbatim
+
+\end_layout
+
+\begin_layout Standard
+Use at most two sentences for each of the following questions.
+\end_layout
+
+\begin_layout Subsubsection*
+(a) 
+\end_layout
+
+\begin_layout Standard
+What is the rôle of 
+\begin_inset Formula $\texttt{n}$
+\end_inset
+
+ and 
+\begin_inset Formula $\texttt{n\_reps}$
+\end_inset
+
+? Write one sentence for each.
+\end_layout
+
+\begin_layout Subsubsection*
+(b) 
+\end_layout
+
+\begin_layout Standard
+What is the rôle of 
+\begin_inset Formula $\texttt{func1d}$
+\end_inset
+
+, and what does 
+\begin_inset Formula $\texttt{np.max}$
+\end_inset
+
+ do?
+\end_layout
+
+\begin_layout Subsubsection*
+(c) 
+\end_layout
+
+\begin_layout Standard
+What is the data type of 
+\begin_inset Formula $\texttt{bs}$
+\end_inset
+
+? What do you call each row of 
+\begin_inset Formula $\texttt{bs}$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Subsubsection*
+(d) 
+\end_layout
+
+\begin_layout Standard
+Explain what 
+\begin_inset Formula $\texttt{results}$
+\end_inset
+
+ is.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+(e) 
+\end_layout
+
+\begin_layout Standard
+What does 
+\begin_inset Formula $\texttt{np.unique}$
+\end_inset
+
+ do in this function? Remember the 
+\begin_inset Formula $\texttt{return\_counts}$
+\end_inset
+
+ argument!
+\end_layout
+
+\begin_layout Subsubsection*
+(f) 
+\end_layout
+
+\begin_layout Standard
+What is returned by the function? 
+\end_layout
+
+\begin_layout Section
+
+\series bold
+Central limit theorem
+\end_layout
+
+\begin_layout Standard
+In this task you will write your own Python code.
+ Please supply both the code and the output of the code.
+ Use 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions in the simulations.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $X$
+\end_inset
+
+ be a Beta distributed variable with shape parameters 
+\begin_inset Formula $a=2$
+\end_inset
+
+ and 
+\begin_inset Formula $b=7$
+\end_inset
+
+.
+ You can use 
+\begin_inset Formula $\texttt{rng.beta(a, b, size = size)}$
+\end_inset
+
+to simulate Beta variables, as documented at 
+\begin_inset Formula $\texttt{https://bit.ly/3ez0VE5}$
+\end_inset
+
+.
+ Its density is 
+\begin_inset Formula $\texttt{stats.beta.pdf(x,a,b)},$
+\end_inset
+
+as documented on 
+\begin_inset Formula $\texttt{https://bit.ly/3sNKCbp}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Simulate samples from the beta distribution and plot them in a histogram,
+ using 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions.
+ Add a plot of the Beta density curve on top of the histogram.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Simulate the sample mean of the beta distribution based on 
+\begin_inset Formula $100$
+\end_inset
+
+ samples using 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions.
+ Visualize the samples in a histogram.
+\end_layout
+
+\begin_layout Enumerate
+According to the central limit theorem, the sample mean is approximately
+ normally distributed.
+ Add a normal density curve to the histogram in (b) that approximately matches
+ the shape of the histogram.
+ (
+\emph on
+Hint:
+\emph default
+ You must find the appropriate mean and standard deviation to plug into
+ 
+\begin_inset Formula $\texttt{stats.norm.pdf(x,mean,standard\_deviation)}$
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+Old ones
+\end_layout
+
+\begin_layout Enumerate
+(
+\series bold
+Simulate probabilities
+\series default
+).
+ Assume 
+\begin_inset Formula $X_{1},X_{2},X_{3}$
+\end_inset
+
+ are independently distributed random variables assuming the value 
+\begin_inset Formula $1$
+\end_inset
+
+ with probability 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $0$
+\end_inset
+
+ with probability 
+\begin_inset Formula $1-p$
+\end_inset
+
+.
+ Using 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions, write Python scripts that:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Approximates the variance of 
+\begin_inset Formula $X_{1}$
+\end_inset
+
+ when 
+\begin_inset Formula $p=0.5$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Makes a histogram of 
+\begin_inset Formula $\bar{X}=\frac{1}{3}(X_{1}+X_{2}+X_{3})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Approximates the probability that 
+\begin_inset Formula $X_{1}=X_{2}=X_{3}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+(
+\series bold
+Simulate densities
+\series default
+).
+ Let 
+\begin_inset Formula $X_{1},X_{2},\ldots,X_{100}$
+\end_inset
+
+ be independent normally distributed with mean 
+\begin_inset Formula $1$
+\end_inset
+
+ and standard deviation 
+\begin_inset Formula $2$
+\end_inset
+
+.
+ Write Python scripts that:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Approximates 
+\begin_inset Formula $X_{1}^{3}+X_{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Makes a histogram of the unbiased sample variance 
+\begin_inset Formula $s^{2}=\frac{1}{99}\sum_{i=1}^{100}(X-\overline{X})^{2}$
+\end_inset
+
+, where 
+\begin_inset Formula $\overline{X}=\frac{1}{100}\sum_{i=i}^{100}X_{i}$
+\end_inset
+
+ is the sampe mean.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+(
+\series bold
+Central limit theorem
+\series default
+).
+ Let 
+\begin_inset Formula $X$
+\end_inset
+
+ be a Beta distributed variable with shape parameters 
+\begin_inset Formula $a=2$
+\end_inset
+
+ and 
+\begin_inset Formula $b=7$
+\end_inset
+
+.
+ You can use 
+\begin_inset Formula $\texttt{rng.beta(a, b, size = size)}$
+\end_inset
+
+to simulate Beta variables, as documented at 
+\begin_inset Formula $\texttt{https://bit.ly/3ez0VE5}$
+\end_inset
+
+.
+ Its density is 
+\begin_inset Formula $\texttt{stats.beta.pdf(x,a,b)},$
+\end_inset
+
+as documented on 
+\begin_inset Formula $\texttt{https://bit.ly/3sNKCbp}$
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Simulate samples from the beta distribution and plot them in a histogram,
+ using 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions.
+ Add a plot of the Beta density curve on top of the histogram.
+\end_layout
+
+\begin_layout Enumerate
+Simulate the sample mean of the beta distribution based on 
+\begin_inset Formula $100$
+\end_inset
+
+ samples using 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions.
+ Visualize the samples in a histogram.
+\end_layout
+
+\begin_layout Enumerate
+According to the central limit theorem, the sample mean is approximately
+ normally distributed.
+ Add a normal density curve to the histogram in (b) that approximately matches
+ the shape of the histogram.
+ (
+\emph on
+Hint:
+\emph default
+ You must find the appropriate mean and standard deviation to plug into
+ 
+\begin_inset Formula $\texttt{stats.norm.pdf(x,mean,standard\_deviation)}$
+\end_inset
+
+)
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+(
+\series bold
+Confidence intervals
+\series default
+).
+ Consider the 
+\begin_inset Formula $95\%$
+\end_inset
+
+ one-sample 
+\begin_inset Formula $t$
+\end_inset
+
+ interval, i.e., 
+\begin_inset Formula 
+\[
+\textsc{ci}=[\overline{x}-t\frac{s}{\sqrt{n}},\overline{x}+t\frac{s}{\sqrt{n}}],
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $s$
+\end_inset
+
+ is the sample standard deviation and 
+\begin_inset Formula $\overline{x}$
+\end_inset
+
+ is the sample mean, 
+\begin_inset Formula $n$
+\end_inset
+
+ is the number of observations, and 
+\begin_inset Formula $t=\texttt{stats.t.ppf(0.975, df = n-1)}$
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Simulate the coverage of the 
+\begin_inset Formula $t$
+\end_inset
+
+ interval when 
+\begin_inset Formula $10$
+\end_inset
+
+ observations are sampled from a beta distribution with parameters 
+\begin_inset Formula $a=2$
+\end_inset
+
+ anb 
+\begin_inset Formula $b=7$
+\end_inset
+
+.
+ Recall that the coverage of a confidence interval is the probability that
+ the true mean lies inside 
+\begin_inset Formula $\textsc{ci}$
+\end_inset
+
+, i.e., 
+\begin_inset Formula $\textsc{coverage}=P(\mu\in\textsc{ci}),$
+\end_inset
+
+where 
+\begin_inset Formula $\mu$
+\end_inset
+
+ is the true mean.
+ (
+\emph on
+Hint:
+\emph default
+ You have to find the true mean of the beta distribution with parameters
+ 
+\begin_inset Formula $(a,b)$
+\end_inset
+
+!)
+\end_layout
+
+\begin_layout Enumerate
+Give an example of a distribution where the coverage is exactly 
+\begin_inset Formula $95\%$
+\end_inset
+
+.
+ You do not need to simulate from this distribution.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+
+\series bold
+Central limit theorem
+\end_layout
+
+\begin_layout Standard
+In this task you will write your own Python code.
+ Please supply both the code and the output of the code.
+ Use 
+\begin_inset Formula $10,000$
+\end_inset
+
+ repetitions in the simulations.
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $X$
+\end_inset
+
+ be a Beta distributed variable with shape parameters 
+\begin_inset Formula $a=2$
+\end_inset
+
+ and 
+\begin_inset Formula $b=7$
+\end_inset
+
+.
+ You can use 
+\begin_inset Formula $\texttt{rng.beta(a, b, size = size)}$
+\end_inset
+
+to simulate Beta variables, as documented at 
+\begin_inset Formula $\texttt{https://bit.ly/3ez0VE5}$
+\end_inset
+
+.
+ Its density is 
+\begin_inset Formula $\texttt{stats.beta.pdf(x,a,b)},$
+\end_inset
+
+as documented at 
+\begin_inset Formula $\texttt{https://bit.ly/3sNKCbp}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+(a) 
+\end_layout
+
+\begin_layout Standard
+Simulate samples from the beta distribution and plot them in a histogram.
+ Add a plot of the Beta density curve on top of the histogram.
+\end_layout
+
+\begin_layout Subsubsection*
+(b) 
+\end_layout
+
+\begin_layout Standard
+Simulate the sample mean of the beta distribution based on 
+\begin_inset Formula $100$
+\end_inset
+
+ samples.
+ Visualize the samples in a histogram.
+\end_layout
+
+\begin_layout Subsubsection*
+(c) 
+\end_layout
+
+\begin_layout Standard
+According to the central limit theorem, the sample mean is approximately
+ normally distributed.
+ Add a normal density curve to the histogram in (b) that approximately matches
+ the shape of the histogram.
+ (
+\emph on
+Hint:
+\emph default
+ You must find the appropriate mean and standard deviation to plug into
+ 
+\begin_inset Formula $\texttt{stats.norm.pdf(x,mean,standard\_deviation)}$
+\end_inset
+
+)
+\end_layout
+
+\end_body
+\end_document

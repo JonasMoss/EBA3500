@@ -1,0 +1,64 @@
+# Introduction {.unnumbered}
+
+::: callout-warning
+This webpage is not finished yet.
+:::
+
+Welcome to the course [Data Analysis with Programming](https://programmeinfo.bi.no/nb/course/EBA-3500). This page contains the curriculum, exercises, and additional information for the course. If you need to get in contact with me, please send an e-mail to `jonas.moss@bi.no`. I do **not** check It's learning often.
+
+The majority of our curriculum is covered by two books.
+
+**Dekking, F. M., Kraaikamp, C., Lopuhaä, H. P., & Meester, L. E. (2005). A Modern Introduction to Probability and Statistics. Springer London. https://doi.org/10.1007/1-84628-168-7** 
+
+You should know this book from your previous course in probability. We will follow the book closely.
+
+**James, G., Witten, D., Hastie, T., & Tibshirani, R. (2013). An Introduction to Statistical Learning. Springer US. https://doi.org/10.1007/978-1-0716-1418-1** 
+
+This on is available online for free; its webpage is [here](https://trevorhastie.github.io/ISLR/). It is a classic, and you can expect other data scientists to know it well. It is a simplified version Elements of Statistical Learning by Hastie, Tibshirani and Friedman, the best known and most widely referenced book of machine learning. The ambitious student will read Elements of Statistical Learning in addition to Introduction to Statistical Learning, but it is a significantly more difficult book.
+
+Be warned that Dekking et. al covers no programming at all, and James et al. uses `R` instead of `Python`. This will not cause us much difficulty, as `R` and `Python` are very similar languages. Supplementary material about `Python` can be found in the sidebar.
+
+This course follows no strict schedule, as it is based around video lectures. The topics along with reading materials and associated video lectures can be found on the bar to the left. You will also find exercises there.
+
+# On workload
+
+## Do the work!
+
+This is ***not a relaxing course***. The content is difficult, both in terms of concepts and skills required. Statistics has an unfair and completely untrue reputation as an easy subject. It is not. Those who claim statistics is easy do not know statistics.
+
+Remember that you are expected to work full days as a student. Since you take four courses and all of them, presumably, have approximately $2$ hours of lectures, that leaves $8$ hours of studying -- on your own -- each week. I expect you to spend *at least* $10$ hours with this course per week. But keeping in mind that this course is both significantly more important and significantly harder than your other courses, so you might have to spend even more time on it.
+
+## Resources
+
+You should probably use other resources than the lecture videos, the books, and the exercises. That is not because these resources do not cover the curriculum. It is because there are 100s of ways to teach the curriculum, and just as many points of view on the difficult parts. You often need to spend significant amounts of time with a concept, looking at it from different angles, in order to finally [grok](https://www.thefreedictionary.com/grokking) it. I did this all the time as a student, and every successful data scientist I know does this.
+
+You should search the internet for answers early on. Understanding what to search for is an extremely important skill for life in general, but especially for data science, programming, and statistics. The key sites to look at are
+
+-   [StackOverflow](https://stackoverflow.com) The primary resource for programming questions. Often covers statistics and data science questions too. Do not be afraid to ask questions there. You might get mean-spirited answers though. (Just accept the mean-spirited answers and move on.)
+
+-   [CrossValidated](https://stats.stackexchange.com) The most widely used statistics Q&A site. Most answers are trustworthy, but the answers are often of lower quality than the other pages, and sometimes wrong. Ignore answers that look iffy.
+
+-   [Mathematics Stack Exhcange](https://math.stackexchange.com) You use this for math questions. Probably not that useful in this course, but it might come up.
+
+There is no definite 1st course in Python curriculum, which is a big and somewhat unwieldy language. You might not have learned about classes (object-oriented Python) or list comprehensions, or maybe not dictionaries either. I will use these concepts without additional explanation. Hence I would *strongly recommend* you spend 4 hours or so getting reasonably familiar with object-oriented programming in Python. It is not strictly speaking necessary for this course, as you won't be asked to write your own classes. But some understanding of classes, methods, and attributes will help you understand what's going on, perhaps even to a great degree! A reasonable place to start would be the videos of [freeCodeCamp](https://www.youtube.com/watch?v=Ej_02ICOIgs&ab_channel=freeCodeCamp.org).
+
+# On programming
+
+This course is partly about programming. Students often find programming hard. **Don't expect to be able solve every exercise in 5 minutes!** Solving programming exercises often take a long time, and you need to persevere.
+
+To become a decent programmer it's a good idea to
+
+1.  Do a lot of exercises.
+2.  Spend at least 20 minutes on each exercise before you give up. You need [to think really hard](https://www.benkuhn.net/thinkrealhard/). Don't expect to be able to solve the problem without making an effort.
+3.  Do the exercise yourself after you have looked at the solution! Close the window and do it from memory. It's also a good idea to revisit the same exercise later on, e.g. the next day, to make sure you're able to do it.
+4.  Tinker around, either modifying exercises yourself, or with your own ideas. If your tinkering leads to something cool, tell me! Use [Kaggle](https://www.kaggle.com/) to download data sets to tinker with and [Mockaroo](https://mockaroo.com/) to generate fake but plausible-looking data sets.
+
+Do not to spend an inordinate amount of time on an exercise before you check the solution. If you have spent 1 hour on an exercise and haven't gotten anywhere, it might be smart to save yourself some time and look at the solution. As I said, you can always come back to it later.
+
+Moreover, be aware that programming is often *extremely frustrating*. It's like talking to someone who just simply refuses to understand what you're saying, no matter how many times you repeat yourself. **It's normal and expected to feel frustrated**!
+
+There are many tips online about learning to program, e.g., [this collection of tips](https://www.codingdojo.com/blog/7-tips-learn-programming-faster). But it mostly boils down to spending a lot of time solving problems.
+
+# About this site
+
+Curious how this site was made? It is written using [Quarto books](https://quarto.org/docs/books).

@@ -1,0 +1,154 @@
+---
+title: "Exercises for Lecture 9: Binary regression (ii)"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+    html:
+      self-contained: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+number-sections: true
+---
+
+## Maximum likelihood and univariate distributions
+
+Recall that $\sqrt{n}(\hat{\theta} - \theta) \to N(0, I(\theta)^{-1})$, where $I(\theta)$ is the Fisher information. When $\theta$ is a scalar, you can use this information to construct confidence intervals for $\theta$ using the $Z$-interval construction. A $(1-\alpha)\%$ confidence interval for $\theta$ is $$CI(\theta; 1-\alpha) = [\hat{\theta} - \Phi^{-1}(1-\alpha/2)I(\theta)^{-1}/\sqrt{n}, \hat{\theta} + \Phi^{-1}(1-\alpha/2)I(\theta)^{-1}/\sqrt{n}],$$where $\Phi^{-1}$ is the quantile function of the normal distribution, called `ppf` in Scipy. Recall that $$\Phi^{-1}(1-\alpha/2)\approx 1.96$$ when $\alpha = 0.95$ and $$\Phi^{-1}(1-\alpha/2)\approx 1.64$$ when $\alpha = 0.90$.
+
+### Poisson distribution
+
+Let $f(x;\lambda)=\frac{\lambda^{k}e^{-\lambda}}{k!}$ be the pmf of a Poisson distribution with parametert $\lambda$. The Poisson distribution is used to event counts when the probability of an event happening is very small but there are many occasions where an event can happen. It is used, e.g., for modeling the number of insurance claims.
+
+> 1.  Plot the Poisson pmf for $\lambda=1,4,10$.
+
+```{python}
+from scipy.stats import poisson
+import numpy as np
+import matplotlib.pyplot as plt
+x = np.arange(0, 20)
+plt.plot(x, poisson.pmf(x, 1))
+plt.plot(x, poisson.pmf(x, 4))
+```
+
+```{python}
+x = np.arange(0, 200)
+plt.plot(x, poisson.pmf(x, 100))
+```
+> 2.  Calculate the maximum likelihood estimator of $\lambda$.
+
+\begin{eqnarray*}
+\log\left[\prod_{i=1}^{n}\frac{\lambda^{k}e^{-\lambda}}{k!}\right] & = & \sum_{i=1}^{n}\log\left[\frac{\lambda^{x_{i}}e^{-\lambda}}{k!}\right]\\
+ & = & \sum_{i=1}^{n}x_{i}\log\left[\lambda\right]-\lambda-\log x_{i}!
+\end{eqnarray*}
+Take the derivative with respect to $\lambda$: $$
+\frac{d}{d\lambda}\log\left[\prod_{i=1}^{n}\frac{\lambda^{k}e^{-\lambda}}{k!}\right]=\frac{1}{\lambda}\sum_{i=1}^{n}x_{i}-n$$
+set this equal to $0$ to find $$\hat{\lambda}=\overline{x}.$$
+
+> 3.  Calculate the mean and variance of $X$ when $X$ is Poisson distributed with parameter $\lambda$.
+
+To solve this one, use the following trick. First differentiate inside and outside the sum, as follows. $$\frac{d}{d\lambda}\sum_{k=0}^{\infty}\frac{\lambda^{k}e^{-\lambda}}{k!}=\sum_{k=0}^{\infty}\frac{d}{d\lambda}\frac{\lambda^{k}e^{-\lambda}}{k!}$$ Then, observe that $\frac{d}{d\lambda}\sum_{k=0}^{\infty}\frac{\lambda^{k}e^{-\lambda}}{k!} = 0$ and use the fact that $\frac{d\lambda^{k}e^{-\lambda}}{d\lambda}=k\lambda^{k-1}e^{-\lambda}-\lambda e^{-\lambda}\lambda^{k}$ to conclude that and $k/k!=1/(k-1)!$ to conclude that
+$$\sum_{k=0}^{\infty}\frac{k\lambda^{k-1}e^{-\lambda}}{k!}=\sum_{k=0}^{\infty}\frac{\lambda^{k}e^{-\lambda}}{k!}=1$$
+Now multiply both sides by $\lambda$, so that $$
+\sum_{k=0}^{\infty}\frac{k\lambda^{k}e^{-\lambda}}{k!}=\lambda.$$
+But the left-hand side equals the expectation of the Poisson!
+
+The variance can be calculated in the same way; the result is $\lambda$.
+
+>4.  Calculate the Fisher information of $\lambda$.
+
+See e.g. [this document](https://ani.stat.fsu.edu/~debdeep/Fisher.pdf) for a solution. (Search the document for "Poisson"). The Fisher information is $1/\lambda$.
+
+> 5.  Use the asymptotic theory of maximum likelihood estimation to derive a confidence interval for $\lambda$.
+
+Just plug in $\overline{x}$ for $\hat{\theta}$ and $\overline{x}$ for the inverse Fisher information. 
+
+> 6.  Using the [annual fatal car crash data](https://www.statista.com/statistics/437961/number-of-road-deaths-in-norway/), estimate $\lambda$ and calculate a $95\%$ confidence interval for $\lambda$.
+
+```{python}
+crashes = [242, 233, 255, 212, 208, 168, 145, 187, 147, 117, 135, 106, 108, 108, 93]
+```
+
+Let's make a `CI` function:
+
+```{python}
+def ci(x):
+  """95% CI for the Poisson distribution parameter."""
+  n = len(x)
+  theta = np.mean(x)
+  fisher_inv = np.mean(x)
+  return [theta - 1.96 * fisher_inv / np.sqrt(n), theta + 1.96 * fisher_inv / np.sqrt(n)]
+```
+
+And calculate the CI using it.
+
+```{python}
+ci(crashes)
+```
+
+> 7.  Do you think using a Poisson distribution is reasonable for this data? (***Hint:*** Try to simulate from the Poisson distribution with the estimated parameters and see what it looks like; compare to the graph on the linked site.)
+
+I'll solve it in a different way. The variance and mean of the Poisson are supposed to be equal. But in this dataset we have
+```{python}
+np.mean(crashes)
+```
+and
+```{python}
+np.var(crashes)
+```
+And it seems very unlikely that these numbers are the same in the population!
+
+This phenomenon, when the variance is greater than the mean in count data, is called *overdispersion*. The go-to model for such situations is the [negative binomial distribution](https://en.wikipedia.org/wiki/Negative_binomial_distribution).
+
+## Logistic regression modelling
+
+### Endometrial data
+
+Load the endometrial data, available at the Github rep under the "resources folder.
+
+```{python}
+import pyreadr
+endometrial = pyreadr.read_r("endometrial.Rda")["endometrial"]
+```
+
+> 1.  Run a logistic regression with `"HG ~ NV + PI + EH"`. What happens with with the coefficient for `NV`?
+
+```{python}
+import pyreadr
+import pandas as pd
+import numpy as np
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
+endometrial = pyreadr.read_r("endometrial.Rda")["endometrial"]
+mod = smf.logit("HG ~ NV + PI + EH", data = endometrial).fit()
+mod.summary()
+```
+
+The `NV` coefficient has a huge standard error, suggesting problems with perfect separation!
+> 2.  Look at the outcome `HG` when `NV=1`. What do you see? What effects does this have on the maximum likelihood estimate of `NV`?
+
+```{python}
+X = pd.concat([
+  pd.Series(np.ones(endometrial.shape[0]), dtype = "int").rename('Intercept'), 
+  endometrial], axis=1)
+X.query("NV == 1")
+```
+The vaue of `HG=1` for every single `NV=1`! Thus its "beneficial" to push the coefficient of `NV` has high as possible - its ML estimator is equal to $\infty$.
+
+3.  Modify the data frame `endometrial` to make the problem go away.
+I'm taking a random element where `NV=1` and just change it to $0$. (This is not recommended - but it works.)
+
+```{python}
+endometrial.at[77, "HG"]
+```
+And we change it.
+```{python}
+endometrial.at[77, "HG"] = 0
+mod = smf.logit("HG ~ NV + PI + EH", data = endometrial).fit()
+mod.summary()
+
+```

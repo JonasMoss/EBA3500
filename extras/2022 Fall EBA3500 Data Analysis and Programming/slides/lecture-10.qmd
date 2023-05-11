@@ -1,0 +1,558 @@
+---
+title: "Lecture 10: Confusion matrices and model fit for linear regression"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: beige
+    highlight-style: nord
+    slide-number: c/t
+    width: 1440
+    height: 810
+    margin: 0.20
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+---
+
+# Confusion matrices, ROC, and AUC
+
+## $0-1$ predictions in binary regression
+
+-   The `predict` method gives you a probability.
+-   But often you have to make a make a prediction of $\hat{Y}$ itself.
+-   Will you follow a marketing lead? Do you believe candidate will get an $A$ when he drinks 5 cups of coffee?
+-   You usually construct predictions of $Y$ using a threshold: $$\hat{Y}=1 \iff \hat{p} > c,$$ where $\hat{p}$ is a predicted probability obtained using `predict` and $\hat{Y}$ is the predicted value of $Y$.
+-   For instance, you could decide to do the action if if $\hat{p} > 0.5$.
+
+## Admission data (again)
+
+```{python}
+#| fig-align: center
+import pandas as pd
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+admission = pd.read_csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+admission.head()
+
+```
+
+## 
+
+```{python}
+model = smf.logit("admit ~ gre + gpa + C(rank)", data = admission).fit()
+plt.hist(model.predict())
+```
+
+## Confusion matrix
+
+The *confusion matrix* shows shows true positives, false negatives, false positives, and true negatives.
+
+|       | $\hat{Y}=1$    | $\hat{Y}=0$    |
+|-------|----------------|----------------|
+| $Y=1$ | True positive  | False negative |
+| $Y=0$ | False positive | True negative  |
+
+## Confusion matrix for `admission` with `c = 0.5`
+
+```{python}
+model.pred_table(threshold = 0.5)
+```
+
+|       | $\hat{Y}=1$ | $\hat{Y}=0$ |
+|-------|-------------|-------------|
+| $Y=1$ | 30          | 97          |
+| $Y=0$ | 19          | 254         |
+
+-   **Question:** How many true positives are there?
+    -   **Answer:** True positives happen when both $\hat{Y}=1$ and $Y=1$. Hence the correct answer is $30$.
+-   **Question:** How many false negatives are there?
+    -   **Answer:** False negatives correspond to $\hat{Y}=0$ and $Y=1$. There are 97 of these.
+
+## Confusion matrix for `admission`
+
+```{python}
+model.pred_table(threshold = 0.6)
+```
+
+|       | $\hat{Y}=1$ | $\hat{Y}=0$ |
+|-------|-------------|-------------|
+| $Y=1$ | 13          | 114         |
+| $Y=0$ | 7           | 266         |
+
+```{python}
+model.pred_table(threshold = 0.5)
+```
+
+|       | $\hat{Y}=1$ | $\hat{Y}=0$ |
+|-------|-------------|-------------|
+| $Y=1$ | 30          | 97          |
+| $Y=0$ | 19          | 254         |
+
+## Confusion matrix for `admission`
+
+-   **Question:** How can you make sure the number of false positives is $0$?
+    -   **Answer:** Make the threshold $c=1$!
+
+::: fragment
+```{python}
+model.pred_table(threshold = 1)
+```
+:::
+
+## True positive rate and false positive rate
+
+$$
+\text{true positive rate}=\frac{\text{true positives}}{\text{true positives} + \text{false negatives}}
+$$ Also known as *sensitivity*, *recall*, and *hit rate*. Abbreviated as `tpr`.
+
+$$
+\text{false positive rate}=\frac{\text{false positives}}{\text{false positives} + \text{true negatives}}
+$$
+
+Also known as *fall-out*. Abbreviated as `fpr`.
+
+|       | $\hat{Y}=1$ | $\hat{Y}=0$ |
+|-------|-------------|-------------|
+| $Y=1$ | 30          | 97          |
+| $Y=0$ | 19          | 254         |
+
+-   Here $TPR = \frac{30}{30 + 97} = 0.24$ and $FPR = \frac{19}{19 + 254} = 0.07$.
+
+## Receiver operating characteristic curve
+
+[![The receiver operating characteristic curve. Source: Wikipedia.](images/Roc_curve.svg.png){fig-align="center"}](https://en.wikipedia.org/wiki/Receiver_operating_characteristic)
+
+## How to make these plots
+
+```{python}
+from sklearn import metrics
+fpr, tpr, _ = metrics.roc_curve(admission.admit, model.predict())
+plt.plot(fpr, tpr)
+plt.show()
+```
+
+## The area under the curve (i)
+
+```{python}
+#| echo: false
+#| fig-align: center
+plt.clf()
+from sklearn import metrics
+fpr, tpr, _ = metrics.roc_curve(admission.admit, model.predict())
+plt.plot(fpr, tpr)
+plt.xlabel("False positive rate")
+plt.ylabel("True positive rate")
+plt.fill_between(fpr, tpr, step="pre", alpha=0.4)
+#plt.plot([0, 1], [0, 1], linewidth = 0.5)
+plt.show()
+```
+
+## The area under the curve (ii)
+
+-   The *area under the curve* (AUC) is the integral of the receiver operating characteristic curve.
+    -   $0.5 \leq AUC \leq 1$.
+    -   $AUC = 1$ if we can predict perfectly.
+    -   $AUC = 0.5$ if we can't predict at all.
+-   Extremely widespread!
+-   Since the AUC doesn't penalize model complexity it shouldn't be used to compare models!
+
+## The $R^2$ for binary regression models
+
+Remember the setup for the $R^{2}$ for non-linear regression: $$
+1-\frac{\sum_{i=1}^{n}(y_{i}-f(x;a_{1},\ldots a_{p}))^{2}}{\sum_{i=1}^{n}(y_{i}-m)^{2}}$$ In general we could write $$R^{2}=1-\frac{R(x)}{R(m)}$$ Where
+
+-   $R(m)$ measures the distance between our best predictions and the data $y$, and
+-   $R(x)$ measures the distance between our best predictions and the data $y$ when we take $x$ into account.
+
+## The log-likelihood and the $R^2$
+
+We use the log-likelihood instead of the quadratic loss! So, letting $p_i = f(x;a_{1},\ldots a_{p})$, define the fitted likelihood $$l(x) = R(x) = \sum_{i=1}^{n}-y_{i}\log \hat{p}_{i}-(1-y_{i})\log(1-\hat{p}_{i}).$$
+
+$$l(m) = R(m) = \sum_{i=1}^{n}-y_{i}\log m-(1-y_{i})\log(1-m),$$ is the *log likelihood of the null model*. It measures how well we can predict $y$ when we don't know any $x$ at all.
+
+## McFadden's $R^2$
+
+Now define the pseudo-$R^2$ or McFadden $R^2$ as $$R^2_{\textrm{McFadden}} = 1 - \frac{l(x)}{l(m)}.$$
+
+-   Since McFadden's $R^2$ doesn't penalize model complexity it shouldn't be used to compare models!
+
+## An example
+
+```{python}
+probit_fit = smf.probit("admit ~ gre + C(rank) + gpa", data = admission).fit()
+logit_fit = smf.logit("admit ~ gre + C(rank) + gpa", data = admission).fit()
+
+def rsq_mcfadden(fit):
+    lower = fit.llnull
+    upper = fit.llf
+    return 1 - upper / lower
+
+print(rsq_mcfadden(probit_fit), rsq_mcfadden(logit_fit))
+```
+
+-   Thus the $R^2$s are $0.0831$ and $0.0829$. But we may also access McFadden's $R^2$ directly: `print(probit_fit.prsquared, logit_fit.prsquared)`.
+
+-   **Question:** Can you compare these $R^2$s to the $R^2$s from linear regression?
+
+    -   **Answer:** No, as we are looking the likelihoods now, not the quadratic distance. Also, the "ordinary" $R^2$ tends to be small for binary data.
+
+## McFadden's $R^2$ vs the ordinary $R^2$
+
+The following picture, Figure 5 from Chapter 5 of [McFadden's Urban Travel Demand: A Behavioral Analysis (1996)](https://eml.berkeley.edu/~mcfadden/travel.html) illustrates the typical relationsship between the least squares $R^2$ (on the $y$-axis) and the pseudo-$R^2$ on the $x$-axis.
+
+![McFadden's comparison if the ordinary R\^2 and McFadden's R\^2. Source: McFadden, D. Urban Travel Demand: A Behavioral Analysis (1996)](images/Skjermbilde%202022-10-24%20161123.png){fig-align="center"}
+
+# Variable selection in linear regression
+
+## Akaike's information criterion (recap)
+
+-   Akaike's information criterion (AIC), defined as $$\text{AIC} = 2p - 2l,$$ where $p$ is the number of estimated parameters and $l$ is the log-likelihood at the estimated parameters.
+-   **The smaller the AIC the better!**
+-   We add $2p$ since a larger number of parameters allows for more noise. It *penalizes model complexity*.
+-   Penalization of model complexity is always needed when comparing model with different number of parameters!
+-   There is a theoretical argument for the choice $p$! but that is beyond the scope of this course.
+
+## The adjusted $R^2$
+
+-   The $R^2$ is good for evaluating how well be can predict the outcome given our covariates, but it's not good for choosing between models.
+-   It doesn't correct for the bias that occurs when using the same data both to estimate the model parameters and evaluating model fit.
+
+::: fragment
+```{python, .fragment}
+import numpy as np
+rng = np.random.default_rng(seed = 313)
+p = 10
+n = 100
+x = rng.normal(0, 1, (n, p)) # think about y ~ 1 + x1 + x2 + ... + x_p
+y = rng.normal(3, 2, n) # True R^2 is 0!
+```
+:::
+
+## 
+
+-   The true $R^2$ for `y ~ x` is $0$ in this model. However, its expectation is not.
+-   Can show that $$R^2 \sim \textrm{Beta}\left(\frac{k-1}{2},\frac{n-k}{2}\right),$$ where $k$ is the number of parameters including the intercept. (That is, $k = p + 1$.)
+-   Using the properties of the Beta distribution, we find that the expected value of $R^2$ is $$E(R^2) = \frac{\frac{k-1}{2}}{\frac{k-1}{2} + \frac{n-k}{2}} = \frac{k-1}{n - 1}.$$
+-   This number might be quite large when the number of predictors is close to the number of observations!
+
+## 
+
+```{python}
+#| code-line-numbers: "1-3|5-7|9-13|15"
+import statsmodels.formula.api as smf
+n_reps = 5000
+yy = rng.normal(3, 2, (n_reps, n))
+
+def func1d(y):
+  fit = smf.ols("y ~ x", data = {}).fit() # y ~ x1 + x2 + ... + x_p
+  return fit.rsquared
+
+rsqs = np.apply_along_axis(
+    func1d = func1d,
+    axis = 1,
+    arr = yy
+)
+
+[np.mean(rsqs), p / (n-1)]
+```
+
+## Constructing the adjusted $R^2$ (i)
+
+-   Recall the definition of the $R^2$: $$R^2 = 1 - \frac{\textrm{Sum of squares with predictors}}{\textrm{Sum of squares without predictors}}$$
+
+-   We can show that $\textrm{Sum of squares with predictors}$ is biased for its population value, the true sum of squares with predictors at our estimated regression coefficient. But we can correct for this bias!
+
+-   One can show that $$\frac{n}{n-p-1}E(\textrm{Sum of squares with predictors})$$ equals the true population sum of squares with predictors. Here $p$ is the number of estimated regression coefficients, minus the intercept.
+
+## Constructing the adjusted $R^2$ (ii)
+
+-   Moreover, we can show that $$\frac{n}{n-1} E(\textrm{Sum of squares with predictors})$$equals the true, population value of the sum of squares without predictors.
+-   It follows that a reasonable corrected $R^2$ is $$R_a^2 = 1 - \frac{\frac{n}{n-p-1} \textrm{Sum of squares with predictors}}{\frac{n}{n-1}\textrm{Sum of squares without predictors}}$$
+-   Rearranging this, we find that $$R_a ^ 2 = 1 - (1 - R^2) \frac{n-1}{n-p-1} .$$
+
+## Notes on the adjusted $R^2$
+
+1.  The adjusted $R^2$, or $R^2_a$, can be less than $0$. Try to understand why.
+2.  We haven't proved that the adjusted $R^2$ squared is unbiased for the true $R^2$. Do you think it is?
+3.  Can you devise a simulation study to explore this problem?
+
+## Comments
+
+-   These methods can be used together with automatic mechanisms for selecting covariates, e.g. backwards and forwards regression.
+-   The BIC ("Bayesian information criterion") is similar to the AIC, but defined as $k\log n - 2\log L$! (The AIC is $2k-2\log L$).
+-   There are many different methods too, but adjusted $R^2$, ANOVA and AIC are most popular.
+
+# Model fit
+
+## Conditions for inference in regression
+
+1.  The linear relationsship is true, $y_i=\beta^T x_i + \epsilon$.
+2.  **No autocorrelaton.** The errors $\epsilon_i$ are independent of each other given $x_i$. (*This is important.*)
+3.  **Normally distributed errors.** The errors are normally distributed. (*Not very important.*)
+4.  **Homoskedastic errors.** The variance of the errors should not depend on $x_i$.
+
+## Residuals
+
+-   Defined as $\hat{y} - y$. It's common to look at plots of residuals.
+-   We often plot "residuals vs. fitted", i.e. $\hat{y} - y$ vs $\hat{y}$
+-   The plots should be without patterns!
+
+## Residuals: Heteroskedastic errors
+
+```{python}
+#| fig-align: center
+rng = np.random.default_rng(seed = 313)
+x = rng.uniform(size=100)
+y = 1 + x + rng.normal(size=100) * (x + 0.5) ** 2
+mod = smf.ols("y ~ x", data = {}).fit()
+plt.scatter(mod.predict(), mod.resid)
+
+```
+
+-   The residuals are smaller when the absolute value of the fitted observations is small!
+
+-   You can make such plots when dealing with multiple covariates too.
+
+## QQ plot of residuals
+
+![Source: Introduction to Linear Regression Analysis (Elizabeth Peck, Geoffrey Vining)](images/qqplot.png){fig-align="center"}
+
+## QQ plot: About $n$
+
+-   Small $n<20$ often don't yield useful quantile-quantile plots!
+
+-   Bu $n>30$ usually suffices.
+
+## QQ plot: $n = 100$, normal distribution
+
+```{python}
+#| fig-align: center
+import numpy as np
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+rng = np.random.default_rng(seed = 313)
+x = rng.normal(size = 100)
+sm.qqplot(x, line ='45')
+plt.show()
+```
+
+## QQ plot: $n = 10$, normal distribution
+
+```{python}
+#| fig-align: center
+import numpy as np
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+rng = np.random.default_rng(seed = 3)
+x = rng.normal(size = 10)
+sm.qqplot(x, line ='45')
+plt.show()
+```
+
+Looks like heavy tails!
+
+## QQ plot: Large $n$, horrible distribution
+
+```{python}
+#| fig-align: center
+rng = np.random.default_rng(seed = 3)
+x = rng.standard_t(size = 50, df = 3)
+sm.qqplot(x, line ='45')
+plt.show()
+```
+
+You're looking for *seriously heavy tails*!
+
+## QQ plot: Large $n$, good distribution
+
+```{python}
+#| fig-align: center
+rng = np.random.default_rng(seed = 3)
+x = rng.uniform(size = 50, low = 0, high = 1)
+sm.qqplot(x, line ='45')
+plt.show()
+```
+
+## Heteroskedasticity
+
+```{python}
+#| fig-align: center
+import seaborn as sns
+rng = np.random.default_rng(seed = 313)
+x = rng.uniform(size=50)
+y = 1 + x + rng.normal(size=50) * (x + 0.5) ** 2
+data = pd.DataFrame({"x": x, "y": y})
+sns.lmplot(data = data, x = "x", y = "y")
+```
+
+## Robust standard error's using White (1980)
+
+-   Inferential procedures such as confidence intervals and *p*-values are *invalid* under heteroskedasticity.
+-   Us the argument `cov_type='HC0'` inside the `fit` methods for robust standard errors.
+
+```{python}
+smf.ols("y ~ x", data = data).fit().pvalues
+```
+
+```{python}
+smf.ols("y ~ x", data = data).fit(cov_type='HC0').pvalues
+```
+
+White, H. (1980). A Heteroskedasticity-Consistent Covariance Matrix Estimator and a Direct Test for Heteroskedasticity. *Econometrica*, *48*(4), 817--838. https://doi.org/10.2307/1912934
+
+# Robust regression
+
+## Telephone data
+
+> Number of international calls from Belgium, taken from the Belgian Statistical Survey, published by the Ministry of Economy.
+
+```{python, .fragment}
+#| fig-align: center
+import seaborn as sns
+import rdatasets as rd
+telef = rd.data("Robustbase", "telef")
+sns.lmplot(data = telef, x = "Year", y = "Calls")
+```
+
+## 
+
+```{python}
+#| fig-align: center
+#| echo: false
+sns.lmplot(data = telef, x = "Year", y = "Calls")
+plt.show()
+```
+
+-   What's happening here? *Clerical errors!* Such errors are abundant.
+
+-   Two ways to fix such problems:
+
+    -   \(a\) Remove the "bad" data. But this is not always feasible.
+
+    -   \(b\) Use *robust* regression methods. Such methods are -- sometimes -- able to automatically ignore data that should be ignored.
+
+## Using `rlm`
+
+::: fragment
+```{python, .fragment}
+robust = smf.rlm(
+  "Calls ~ Year", 
+  data = telef, 
+  M = sm.robust.norms.HuberT()).fit()
+```
+:::
+
+::: fragment
+```{python, .fragment}
+#| fig-align: center
+sns.lmplot(data = telef, x = "Year", y = "Calls")
+plt.plot(telef["Year"], robust.predict(), color = "red")
+```
+:::
+
+## Duncan prestige ([here](https://www.statsmodels.org/dev/examples/notebooks/generated/regression_plots.html#Leverage-Resid2-Plot))
+
+> The Duncan data frame has 45 rows and 4 columns. Data on the prestige and other characteristics of 45 U. S. occupations in 1950.
+
+```{python}
+prestige = sm.datasets.get_rdataset("Duncan", "carData", cache=True).data
+prestige.head()
+```
+
+## Is there an outlier here?
+
+```{python}
+prestige = sm.datasets.get_rdataset("Duncan", "carData", cache=True).data
+fig = plt.figure(figsize = (10, 7))
+ax = plt.axes(projection ="3d")
+ax.scatter3D(prestige.income, prestige.education, prestige.prestige, alpha=0.7)
+plt.show()
+```
+
+## Fitting the Duncan prestige data
+
+```{python}
+prestige_model = smf.ols("prestige ~ income + education", data=prestige).fit()
+print(prestige_model.summary())
+```
+
+## Residual plot for Duncan prestige data
+
+```{python}
+#| fig-align: center
+plt.scatter(prestige_model.resid, prestige_model.predict())
+plt.show()
+```
+
+## 
+
+```{python}
+#| fig-align: center
+#| echo: false
+prestige = sm.datasets.get_rdataset("Duncan", "carData", cache=True).data
+fig = plt.figure(figsize = (10, 7))
+ax = plt.axes(projection ="3d")
+ax.scatter3D(prestige.income, prestige.education, prestige.prestige, alpha=0.7)
+xx, yy = np.meshgrid(range(100), range(100))
+mod = smf.ols("prestige ~ income + education", data=prestige).fit()
+z = mod.params[0] + mod.params[1] * xx + mod.params[2] * yy
+ax.plot_surface(xx, yy, z, alpha=0.5)
+plt.show()
+```
+
+## Robust regression
+
+```{python}
+robust = smf.rlm(
+  "prestige ~ income + education", 
+  data = prestige, 
+  M = sm.robust.norms.HuberT()).fit()
+print(robust.summary())
+```
+
+## 
+
+```{python}
+#| fig-align: center
+#| echo: false
+prestige = sm.datasets.get_rdataset("Duncan", "carData", cache=True).data
+fig = plt.figure(figsize = (10, 7))
+ax = plt.axes(projection ="3d")
+ax.scatter3D(prestige.income, prestige.education, prestige.prestige, alpha=0.7)
+xx, yy = np.meshgrid(range(100), range(100))
+mod = smf.ols("prestige ~ income + education", data=prestige).fit()
+z = mod.params[0] + mod.params[1] * xx + mod.params[2] * yy
+ax.plot_surface(xx, yy, z, alpha=0.5)
+robust = smf.rlm(
+  "prestige ~ income + education", 
+  data = prestige, 
+  M = sm.robust.norms.HuberT()).fit()
+z = robust.params[0] + robust.params[1] * xx + robust.params[2] * yy
+ax.plot_surface(xx, yy, z, alpha=0.5)
+plt.show()
+```
+
+# Summary (i)
+
+1.  The ROC displays the relationsship between the true positive rate and the false negative rate.
+2.  The AUC measures how good your model is at predicting, with $0.5$ being no better than chance and $1$ being perfect. The AUC should not be used to compare models. Use the AIC for that.
+3.  McFadden's $R^2$ is a generalization of the $R^2$ to binary models.
+
+# Summary (ii)
+
+1.  You can handle outliers and clerical errors using robust regression models.
+2.  Residual plots can be used to find out if the residuals are heteroskedastic. If the residuals are heteroskedastic, you may use White (1980) corrected standard errors.
+3.  Quantile-quantile plots are used to check if residuals are normal. Be on the lookout for heavy tails.
+4.  The adjusted $R^2$ can be used for model selection.

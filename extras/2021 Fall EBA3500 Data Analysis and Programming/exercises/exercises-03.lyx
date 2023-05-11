@@ -1,0 +1,537 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 4cm
+\topmargin 4cm
+\rightmargin 4cm
+\bottommargin 4cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+EBA3500 Fall 2022 
+\begin_inset Newline newline
+\end_inset
+
+Exercises 4: Inference, transformations, more correlation
+\end_layout
+
+\begin_layout Author
+Jonas Moss
+\end_layout
+
+\begin_layout Section
+Inference
+\end_layout
+
+\begin_layout Standard
+How do you define a 
+\emph on
+p
+\emph default
+-value, and how do you use them in regression?
+\end_layout
+
+\begin_layout Section
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ and the correlation
+\end_layout
+
+\begin_layout Subsection*
+a) The 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ in least absolute deviations regression
+\end_layout
+
+\begin_layout Standard
+Make a function 
+\begin_inset Formula $\mathtt{rsq\_lad}$
+\end_inset
+
+ that calculates the 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ for least absolute deviations (
+\begin_inset Formula $R_{lad}^{2}$
+\end_inset
+
+ from now on).
+ Make sure to test it up against at least two examples.
+ Is 
+\begin_inset Formula $R_{lad}^{2}$
+\end_inset
+
+ symmetric, i.e., is the 
+\begin_inset Formula $R_{lad}^{2}$
+\end_inset
+
+ between 
+\begin_inset Formula $y$
+\end_inset
+
+ and 
+\begin_inset Formula $x$
+\end_inset
+
+ the same as the 
+\begin_inset Formula $R_{lad}^{2}$
+\end_inset
+
+ between 
+\begin_inset Formula $x$
+\end_inset
+
+ and 
+\begin_inset Formula $y$
+\end_inset
+
+?
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Hint
+\emph default
+: To avoid bugs due to naming of columns, use 
+\begin_inset Formula $\mathtt{data=pd.DataFrame({'y':y,'x':x})}$
+\end_inset
+
+ inside the regression function instead of 
+\begin_inset Formula $\mathtt{data=pd.DataFrame([y,x].T)}$
+\end_inset
+
+.
+ In very special cases, the progam calculating the least absolute deviations
+ will fail to give correct results.
+ You have to return 
+\begin_inset Formula $\mathtt{np.max([0,rsq])}$
+\end_inset
+
+to make the 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ correct.
+ (This is equivalent to the slope being 
+\begin_inset Formula $0$
+\end_inset
+
+ and and the intercept equal to the median.) 
+\end_layout
+
+\begin_layout Subsection*
+b) Anscombe's Quartet
+\end_layout
+
+\begin_layout Standard
+Anscombe's quartet are four dissimilar datasets with the same correlations
+ / 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+s using least squares.
+ Load the data and plot it using.
+\end_layout
+
+\begin_layout LyX-Code
+import seaborn as sns 
+\end_layout
+
+\begin_layout LyX-Code
+sns.set_theme(style="ticks")
+\end_layout
+
+\begin_layout LyX-Code
+df = sns.load_dataset("anscombe")
+\end_layout
+
+\begin_layout LyX-Code
+sns.lmplot(x="x", y="y", col="dataset", 
+\end_layout
+
+\begin_layout LyX-Code
+hue="dataset", data=df, col_wrap=2, 
+\end_layout
+
+\begin_layout LyX-Code
+ci=None, palette="muted", height=4, scatter_kws={"s": 50, "alpha": 1}) 
+\end_layout
+
+\begin_layout LyX-Code
+plt.show()
+\end_layout
+
+\begin_layout Standard
+Calculate the 
+\begin_inset Formula $R_{lad}^{2}$
+\end_inset
+
+ values for these four datasets, both 
+\begin_inset Formula $R_{lad}^{2}(x,y)$
+\end_inset
+
+ and 
+\begin_inset Formula $R_{lad}^{2}(y,x)$
+\end_inset
+
+.
+ Compare the the least squares case.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Hint:
+\emph default
+ You may want to use (and try to understand) 
+\begin_inset Formula 
+\[
+\mathtt{\text{df.groupby("dataset").apply(lambdaz:rsq\_lad(z["x"],z["y"]))}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Be sure to read the hint in (a).
+ Try to reverse the axes of the plot using x="y", y="x" inside sns.lmplot
+ above.
+\end_layout
+
+\begin_layout Subsection*
+c) Correlation using least absolute deviations
+\end_layout
+
+\begin_layout Standard
+Using the equivalent definition of the correlation (for least squares) in
+ the slides, propose a definition of the correlation for least absolute
+ deviations.
+ Make a Python function that calculates this 
+\begin_inset Quotes eld
+\end_inset
+
+LAD-correlation
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout Section
+Non-linear least squares
+\end_layout
+
+\begin_layout Subsection
+Estimator–plotter function
+\end_layout
+
+\begin_layout Standard
+Make the following function:
+\end_layout
+
+\begin_layout LyX-Code
+nls_plotter(x, y, func):
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+Estimate the parameters of func (as in curve_fit) 
+\end_layout
+
+\begin_layout LyX-Code
+using non-linear least squares.
+ Make a scatterplot of
+\end_layout
+
+\begin_layout LyX-Code
+x and y and add the curve defined by func using the estimated
+\end_layout
+
+\begin_layout LyX-Code
+parameters.
+ Return the non-linear R squared.
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Hint:
+\emph default
+ You may use 
+\begin_inset Formula $\mathtt{*params}$
+\end_inset
+
+ to 
+\begin_inset CommandInset href
+LatexCommand href
+name "unpack arguments"
+target "https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Four parameterized functions
+\end_layout
+
+\begin_layout Standard
+Make the following functions in Python.
+ Make sure they are compatible with 
+\begin_inset Formula $\mathtt{curve\_fit}$
+\end_inset
+
+.
+ See 
+\begin_inset CommandInset href
+LatexCommand href
+name "this link for more."
+target "https://sites.ualberta.ca/~lkgray/uploads/7/3/6/2/7362679/slides_-_nonlinearlogisticregression.pdf"
+literal "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{a}{1+b^{(x-c)}}+d &  & \textrm{(Logistic curve)}\\
+a+\frac{b}{x+c} &  & \textrm{(Hyperbolic curve)}\\
+a+bx^{c} &  & \textrm{(Logarithmic curve)}\\
+a+bc^{x} &  & \textrm{(Exponential curve)}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+4-plotter
+\end_layout
+
+\begin_layout Standard
+Make a plotting function 
+\begin_inset Formula $\mathtt{grid\_plotter}$
+\end_inset
+
+ that makes 4 separate plots, one for each of the functions above, in a
+ single window.
+ The plot contains a scatterplot of 
+\begin_inset Formula $y$
+\end_inset
+
+ vs 
+\begin_inset Formula $x$
+\end_inset
+
+ and adds the non-linear least squares fitted curves for one of the functions
+ above.
+ The function should return a dictionary with the 
+\begin_inset Formula $R^{2}$
+\end_inset
+
+ for each of the curves.
+ Write a suitable docstring for the function.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Hint:
+\emph default
+ Use e.g.
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "this"
+target "https://towardsdatascience.com/master-the-art-of-subplots-in-python-45f7884f3d2e"
+literal "false"
+
+\end_inset
+
+ to make a suitable plot.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+\emph on
+Nota bene
+\series default
+:
+\emph default
+ Be sure to make the function error-tolerant! For some combinations of data
+ of functions, 
+\begin_inset Formula $\mathtt{curve\_fit}$
+\end_inset
+
+ will not work at all.
+ Use the 
+\begin_inset Formula $\mathtt{try}$
+\end_inset
+
+ and except commands to handle errors arising from curve_fit.
+ See e.g.
+ 
+\begin_inset CommandInset href
+LatexCommand href
+name "this link "
+target "https://realpython.com/python-exceptions/"
+literal "false"
+
+\end_inset
+
+for more information.
+\end_layout
+
+\begin_layout Subsection
+Application
+\end_layout
+
+\begin_layout Standard
+We will look at the dataset obtained from
+\end_layout
+
+\begin_layout LyX-Code
+from rdatasets import data 
+\end_layout
+
+\begin_layout LyX-Code
+dataset = data("DNase") 
+\end_layout
+
+\begin_layout LyX-Code
+dataset = dataset[dataset['Run'] == 1]
+\end_layout
+
+\begin_layout LyX-Code
+x = np.log(dataset["conc"]) 
+\end_layout
+
+\begin_layout LyX-Code
+y = dataset["density"]
+\end_layout
+
+\begin_layout Standard
+Use the 
+\begin_inset Formula $\mathtt{grid\_plotter}$
+\end_inset
+
+ function on this data.
+ Which functional form fits the data best?
+\end_layout
+
+\end_body
+\end_document

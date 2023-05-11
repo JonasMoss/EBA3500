@@ -1,0 +1,42 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Data analysis with Programming"
+  author: "Jonas Moss"
+  date: "12.12.2022"
+  search: false
+  repo-url: https://github.com/bi-ds/EBA-3500/
+  sidebar:
+    style: floating
+  chapters:
+    - index.qmd
+    - 00-python-tips.qmd
+    - 01-scipy-numpy.qmd
+    - 02-statistical-simulation.qmd
+    - 03-exploratory-data-analysis.qmd
+    - 04-statistical-models.qmd
+    - 05-unbiased-estimators-efficiency.qmd
+    - 06-constructing-estimators.qmd
+    - 07-confidence-intervals.qmd
+    - 08-testing-hypotheses.qmd
+    - 09-testing-the-sample-mean.qmd
+    - 10-statistical-learning.qmd
+    - 11-basics-of-linear-regression.qmd
+    - 12-inference-for-linear-regression.qmd
+    - 13-anova.qmd
+    - 14-binary-regression.qmd
+
+format:
+  html:
+    theme: zephyr
+    highlight-style: nord
+
+editor: source
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3

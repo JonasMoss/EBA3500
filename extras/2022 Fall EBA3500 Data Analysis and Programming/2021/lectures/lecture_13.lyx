@@ -1,0 +1,609 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass amsart
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+EBA3500: Convergence in distribution and the central limit theorem
+\end_layout
+
+\begin_layout Author
+Jonas Moss
+\end_layout
+
+\begin_layout Standard
+Intuitively, convergence in distribution means 
+\begin_inset Quotes eld
+\end_inset
+
+convergence of histograms
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The definition, however, is quite different.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:Convergence in distribution"
+
+\end_inset
+
+A sequence of real-valued random variables 
+\begin_inset Formula $X_{n}$
+\end_inset
+
+ with distribution functions 
+\begin_inset Formula $F_{n}$
+\end_inset
+
+ converges in distribution to a random variable 
+\begin_inset Formula $X$
+\end_inset
+
+ with distribution function 
+\begin_inset Formula $F$
+\end_inset
+
+ if 
+\begin_inset Formula $F_{n}(x)\to F(x)$
+\end_inset
+
+ for all points 
+\begin_inset Formula $x$
+\end_inset
+
+ where 
+\begin_inset Formula $F$
+\end_inset
+
+ is continuous.
+ We denote convergence in distribution by 
+\begin_inset Formula $X_{n}\stackrel{d}{\to}X$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+Recall that the distribution function is 
+\begin_inset Formula $F(x)=P(X\leq x)$
+\end_inset
+
+.
+ We include this definition mostly for completeness – I won't ask you to
+ do anything with it.
+ But you should be aware that convergence in distribution has a precise,
+ mathematical definition and that it involves the distribution function
+ 
+\begin_inset Formula $F$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Definition
+There are some trivial examples of convergence in distribution.
+ Again, think in terms of histograms, not distribution functions:
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $X$
+\end_inset
+
+ be normal and 
+\begin_inset Formula $X_{n}=X+\frac{1}{n}$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $X_{n}$
+\end_inset
+
+ converges in distribution to 
+\begin_inset Formula $X$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Let 
+\begin_inset Formula $Y_{1},Y_{2},...$
+\end_inset
+
+ be independent standard normal variables.
+ Then 
+\begin_inset Formula $Y_{n}$
+\end_inset
+
+ still converges in distribution to a standard normal.
+\end_layout
+
+\begin_layout Standard
+As these two examples show, convergence in distribution has nothing to do
+ with the dependence of the variables in the sequence.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Convergence of estimators
+\end_layout
+
+\begin_layout Standard
+We usually deal with estimators
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\sqrt{n}(\hat{\theta}-\theta)\stackrel{d}{\to}N(0,\sigma)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The term 
+\begin_inset Formula $\sqrt{n}$
+\end_inset
+
+ is called the 
+\emph on
+rate of convergence
+\emph default
+.
+ In this case it's the square root of 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ This is by far the most common rate of converges, and virtually every interesti
+ng quantity that converges with this reate converges to a normal distribution.
+ The variance 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+ is frequently called the 
+\emph on
+asymptotic variance
+\emph default
+.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Central Limit Theorem
+\end_layout
+
+\end_inset
+
+Let 
+\begin_inset Formula $X_{1},...,X_{n}$
+\end_inset
+
+ be independent and identically distributed random variables with finite
+ variance 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+ and mean 
+\begin_inset Formula $\mu$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $\sqrt{n}(\overline{X}-\mu)\to N(0,\sigma)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Remark
+The rate of convergence is 
+\begin_inset Formula $\sqrt{n}$
+\end_inset
+
+ for any sequence 
+\begin_inset Formula $X_{1},X_{2},...,X_{n}$
+\end_inset
+
+, but the speed of convergence will vary.
+ For instance, if all 
+\begin_inset Formula $X_{i}$
+\end_inset
+
+ are normal, their mean will be exactly normal, for any 
+\begin_inset Formula $n$
+\end_inset
+
+.
+ But if the variables have fat tails, such as the log-normal distribution,
+ the convergence will be slow.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+The assumption that 
+\begin_inset Formula $\sigma^{2}$
+\end_inset
+
+ is finite is necessary.
+ There are distributions with infinite variance, such as the 
+\begin_inset Formula $t$
+\end_inset
+
+-distribution with 
+\begin_inset Formula $2$
+\end_inset
+
+ degrees of freedom.
+ See 
+\begin_inset CommandInset href
+LatexCommand href
+name "this post on CrossValidated."
+target "https://stats.stackexchange.com/a/348993"
+literal "false"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+The most common proof of the central limit theorem is based on so-called
+ 
+\emph on
+moment-generating functions 
+\emph default
+or on Fourier transforms.
+ This material is beyond the scope of this lecture, but I would recommend
+ reading the wikipedia page on moment-generating functions, as it does not
+ require much mathematical background.
+\end_layout
+
+\begin_layout Subsubsection*
+What is the point of this?
+\end_layout
+
+\begin_layout Standard
+We care about convergence in distribution for two reasons:
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+(Qualitative)
+\series default
+.
+ It gives us qualitative information about how much we can expect to know,
+ and how much we can expect it to help to get more data.
+ 
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+(Inference)
+\series default
+.
+ We can use the convergence to construction confidence intervals and do
+ hypothesis tests.
+\end_layout
+
+\begin_layout Subsubsection*
+Qualitative aspects
+\end_layout
+
+\begin_layout Standard
+Think about any problem where you want to measure something, for instance
+ the mean income among Norwegian 30-year olds.
+ Suppose you have sampled 
+\begin_inset Formula $n_{1}=100$
+\end_inset
+
+ people from this population.
+ How accurate is your estimated mean? You can answer that question using
+ the standard deviation.
+ But how much will sampling yet another 
+\begin_inset Formula $100$
+\end_inset
+
+ people reduce your standard deviation? Sampling 
+\begin_inset Formula $100$
+\end_inset
+
+ more people, so that you have 
+\begin_inset Formula $n_{2}=200$
+\end_inset
+
+, will reduce your standard deviation by a factor of 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\sigma}{\sqrt{n_{1}}}/\frac{\sigma}{\sqrt{n_{2}}}=\sqrt{\frac{n_{2}}{n_{1}}}=\sqrt{\frac{200}{100}}=\sqrt{2}\approx1.414.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Why would you care about this? The result that most estimators converge
+ at the same rate, to the same limit distribution, allows you to do the
+ same thing with other estimators too! You can reason as if the estimator
+ was the mean! Examples include the regression coefficients in virtually
+ any regression model, the median, the standard deviation, and so on.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Review question:
+\series default
+ You have calculated the median based on 
+\begin_inset Formula $n=100$
+\end_inset
+
+ samples.
+ How much more precise will you be when using 
+\begin_inset Formula $n=300$
+\end_inset
+
+ samples instead?
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Answer:
+\series default
+ You can reason just as you would for the mean, hence the ratio is 
+\begin_inset Formula $\sqrt{3}\approx1.73$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let's consider another example, namely that of estimating the mode of a
+ distribution.
+ The most famous estimator of the mode is Chernoff's mode estimator, which
+ converges at the rate 
+\begin_inset Formula $n^{1/3}$
+\end_inset
+
+.
+ Then you can't reason as you would for the mean anymore.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Review question:
+\series default
+ You have calculated the mode, using Chernoff's estimator, based on 
+\begin_inset Formula $n=100$
+\end_inset
+
+ samples.
+ How much more precise will you be when using 
+\begin_inset Formula $n=300$
+\end_inset
+
+ samples instead?
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Answer:
+\series default
+ Now you can't reason in the same way anymore, but nearly in the same way.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\sigma}{n_{1}^{1/3}}/\frac{\sigma}{n_{2}^{1/3}}=\left(\frac{n_{2}}{n_{1}}\right)^{1/3}=\left(\frac{300}{100}\right)^{1/3}=3^{1/3}\approx1.44.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Inference
+\end_layout
+
+\begin_layout Standard
+The central limit theorem allows you pretend that everything is normal all
+ the time.
+ Importantly, you can use this to construct approximate confidence intervals
+ and hypothesis tests.
+\end_layout
+
+\begin_layout Standard
+Remember the definition of a confidence interval: An interval 
+\begin_inset Formula $CI$
+\end_inset
+
+ is a level 
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+ confidence interval for 
+\begin_inset Formula $\theta$
+\end_inset
+
+ if it includes 
+\begin_inset Formula $\theta$
+\end_inset
+
+ with probability at least 
+\begin_inset Formula $1-\alpha$
+\end_inset
+
+, no matter what the true 
+\begin_inset Formula $\theta$
+\end_inset
+
+ is.
+ If we pretend the central limit theorem holds exactly, we might make approximat
+e confidence intervals.
+\end_layout
+
+\begin_layout Proposition
+Suppose that 
+\begin_inset Formula $\sqrt{n}(\hat{\theta}-\theta)\stackrel{d}{\to}N(0,\sigma)$
+\end_inset
+
+ and let 
+\begin_inset Formula $\hat{\sigma}^{2}$
+\end_inset
+
+ be a consistent estimator of the asymptotic variance.
+ Then an approximate 
+\begin_inset Formula $(1-\alpha)\%$
+\end_inset
+
+ confidence interval can be constructed,
+\end_layout
+
+\begin_layout Proposition
+\begin_inset Formula 
+\[
+CI=[\hat{\theta}-z_{1-\alpha/2}\hat{\sigma}/\sqrt{n},\hat{\theta}+z_{1-\alpha/2}\hat{\sigma}/\sqrt{n}],
+\]
+
+\end_inset
+
+where 
+\begin_inset Formula $z_{q}$
+\end_inset
+
+ is the 
+\begin_inset Formula $q$
+\end_inset
+
+-quantile of the normal distribution.
+ 
+\end_layout
+
+\begin_layout Remark
+The quantile function of the normal distribution is called 
+\begin_inset Formula $\texttt{scipy.stats.norm.ppf(q)}$
+\end_inset
+
+in Python.
+\end_layout
+
+\end_body
+\end_document

@@ -1,0 +1,272 @@
+---
+title: "Lecture 11: Collinearity and confidence bands"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: beige
+    highlight-style: nord
+    slide-number: c/t
+    width: 1440
+    height: 810
+    margin: 0.20
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+---
+
+# Confidence bands
+
+## 
+
+```{python}
+import seaborn as sns
+plt.rcParams["figure.figsize"] = (12, 5)
+#sns.lmplot()
+```
+
+-   **Question:** Why would you care about this?
+-   **Answers:** It tells you how uncertain your prediction is! The prediction isn't worth much when the uncertainty is huge!
+-   But how do we do this thing for multiple linear regression models and logistic regression models?
+
+## Pointwise confidence bands
+
+Let $y=f(x)$ be the true relationship between $x$ and $y$. Then $\hat{f}(x)\pm w(x)$ is a $1-\alpha$-level pointwise confidence band if
+
+$$
+P(\hat{f}(x)-w(x)\leq f(x) \leq \hat{f}(x)+w(x)) = 1-\alpha. 
+$$
+
+Usually $\alpha = 0.1$ or $\alpha = 0.05$.
+
+-   This is not a prediction band! We are quantifying the error in the estimation of $f(x)$, not the error in a prediction.
+
+-   If the true model is $y=f(x)+\epsilon$, we would need to take $\epsilon$ into account when quantifying the error in prediction.
+
+## Construction for logistic regression models
+
+This is an implementation of confidence bands for logistic regression models with on covariate $x$.
+
+```{python}
+def logistic_conf_bands(formula, x, data):
+  """ Plot logistic 95% confidence bands for `formula` with x-axis variable
+  `x` and data `data`."""
+  model = smf.logit(formula, data = data).fit()
+  X = model.model.exog
+  preds = model.predict()
+  F = lambda x: 1/(1+np.exp(-x))
+  f = lambda x: np.exp(-x)/(1 + np.exp(-x)) ** 2
+  g = lambda x: x @ model.cov_params() @ x * f(model.params @ x) ** 2
+  taus_sqrt = np.sqrt(np.array([g(y) for y in np.array(X)]))
+  hats = np.array([F(model.params @ y) for y in np.array(X)])
+  df = pd.DataFrame({
+    'x': np.array(data[x]), 
+    'y': preds, 
+    'ymin': hats - 1.96*taus_sqrt, 
+    'ymax': hats + 1.96*taus_sqrt})
+  ax = df.plot(x = 'x', y = 'y')
+  ax.fill_between(x = df['x'], y1 = df['ymax'], y2 = df['ymin'], alpha=.2)
+  ax.set_xlim(left=0, right=1)
+  ax.set_ylim(bottom=0, top=1)
+  ax.get_legend().remove()  
+```
+
+## Example
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.formula.api as smf
+import pandas as pd
+
+predictions = pd.read_csv("data/predictions.csv")
+predictions = predictions.sort_values(by = "prediction")
+predictions.head()
+```
+
+## Simple model
+
+```{python}
+formula = "outcome ~ prediction"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## Is it U-shaped? ;)
+
+```{python}
+formula = "outcome ~ prediction + I(prediction**2)"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## Simple model (2)
+
+```{python}
+from scipy.special import logit
+formula = "outcome ~ logit(prediction)"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## More complex model
+
+```{python}
+formula = "outcome ~ prediction + logit(prediction)"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## B-spline model
+
+```{python}
+formula = "outcome ~ bs(prediction, degree = 3, df = 5)"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## Polynomial model
+
+```{python}
+formula = "outcome ~ np.vander(prediction, 7, increasing=True) - 1"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+## B-spline with logit transform
+
+```{python}
+formula = "outcome ~ bs(logit(prediction), degree = 3, df = 5)"
+logistic_conf_bands(formula, "prediction", predictions)
+plt.show()
+smf.logit(formula, data = predictions).fit().aic
+```
+
+# Collinear covariate matrices
+
+## Perfect collinearity
+
+-   A set of covariates is perfectly collinear if you can write one of them as linear combination of the others.
+-   If you have covariates $x_1, x_2, x_3, \ldots, x_p$, they are perfectly collinear if $x_1 = \sum_2^p \alpha_i x_i$ for some vector $\alpha$.
+-   The design matrix is defined as $$X=\left[\begin{array}{cccc}
+    1 & x_{11} & \cdots & x_{p1}\\
+    1 & x_{12} & \cdots & x_{p2}\\
+    1 & x_{13} & \cdots & x_{p3}\\
+    \vdots & \vdots &  & \vdots\\
+    1 & x_{1n} & \cdots & x_{pn}
+    \end{array}\right]$$
+
+## Perfect collinearity: Example
+
+$$X=\left[\begin{array}{cccc}1 & 1 & 1 & 0\\1 & 2 & 4 & 2\\1 & 3 & 9 & 6\\1 & 4 & 16 & 12\\1 & 5 & 25 & 20\end{array}\right]$$
+
+-   Observe that the final column is a linear combination of the other columns.
+-   **Question:** How can you define $x_4$ in terms of the other column vectors?
+    -   **Answer:** $x_4 = 2x_1 - x_2 + x_3$.
+-   ***This always happens if there are more predictors than observations,*** $n < p$! The easiest way to accidentally get into this situation is by adding loads of categorical variables to your model.
+
+## Numerically singular
+
+-   We can check perfect collinearity by checking if $X^TX$ is invertible!
+-   Recall that a matrix is invertible if and only if all its eigenvalues are non-zero.
+-   But what happens if an eigenvalues is *almost* 0?
+
+## "Almost" collinear
+
+$$X=\left[\begin{array}{cccc} 1 & 1 & 1 & 0\\ 1 & 2 & 4 & 2\\ 1 & 3 & 9 & 6\\ 1 & 4 & 16 & 12\\ 1 & 5 & 25 & 20 + 0.000001\\ \end{array}\right]$$
+
+-   This matrix *is* invertible!
+-   But can the computer "see" that it's invertible when we add a tiny tiny number to the final element of the matrix?
+
+## What happens in Python?
+
+```{python}
+#| error: true
+
+import numpy as np
+x = lambda eps: np.array(
+[[1,1,1,0],
+[1,2,4,2],
+[1,3,9,6],
+[1,4,16,12],
+[1,5,25,20 + eps]]
+)
+
+y = x(0)
+np.linalg.inv(y @ y.transpose())
+```
+
+That's expected, since we know the matrix is singular. But how about small $\epsilon$s?
+
+## Trying different $\epsilon$
+
+```{python}
+#| error: true
+y = x(0.000001)
+np.linalg.inv(y @ y.transpose())
+```
+
+That worked!
+
+```{python}
+#| error: true
+y = x(0.000000000000001)
+np.linalg.inv(y @ y.transpose())
+```
+
+But that didn't.
+
+## In practice
+
+```{python}
+#| error: true
+#| output-location: fragment
+import statsmodels.api as sm
+y = x(0.000000000000001)
+z = y @ np.array([1, 2, 3, 4])
+mod = sm.OLS(endog = z, exog = y).fit()
+print(mod.summary())
+```
+
+## Bouncing betas!
+
+```{python}
+#| error: true
+#| output-location: fragment
+import statsmodels.api as sm
+y = x(0.00000001)
+z = y @ np.array([1, 2, 3, 4])
+mod = sm.OLS(endog = z, exog = y).fit()
+print(mod.summary())
+```
+
+-   A modification of `0.00000001` changed three coefficient estimates dramatically!
+-   This phenomenon is called *bouncing betas*.
+-   Most common when using many categorical covariates.
+
+# Summary
+
+1.  Almost collinear covariate matrices make inference hard and can produce bouncing betas.
+
+2.  Quadratic regression is popular. But it's usually not a good idea to use it!
+
+3.  Polynomial regression is bad; regression splines are much better.
+
+4.  Any function $g(x)$ be used to transform variables in a regression model.

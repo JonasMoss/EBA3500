@@ -1,0 +1,430 @@
+---
+title: "Lecture 8: Binary regression"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+  revealjs:
+    self-contained: true
+    theme: beige
+    highlight-style: nord
+    slide-number: c/t
+    width: 1920
+    height: 1080
+    margin: 0.15
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    incremental: true   
+    auto-stretch: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+---
+
+```{python}
+#| echo: false
+from tabulate import tabulate
+
+```
+
+# Why do we need binary regression?
+
+## College admission
+
+We'll work with an example from [this page](https://stats.idre.ucla.edu/r/dae/logit-regression/) about admission to colleges.
+
+> This dataset has a binary response (outcome, dependent) variable called **admit**. There are three predictor variables: **gre**, **gpa** and **rank**. We will treat the variables gre and gpa as continuous. The variable rank takes on the values 1 through 4. Institutions with a rank of 1 have the highest prestige, while those with a rank of 4 have the lowest.
+
+```{python}
+#| smaller: true
+import pandas as pd
+admission = pd.read_csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+admission.head()
+```
+
+## Visualization
+
+```{python}
+#| echo: true
+#| fig-align: "center"
+import seaborn as sns
+import matplotlib.pyplot as plt
+#sns.pairplot(admission)
+```
+
+Whoops! Doesn't work due to a bug in matplotlib, I belive.
+
+## How about the correlations?
+
+```{python}
+import numpy as np
+np.corrcoef(np.asarray(admission.T)) 
+```
+
+::: r-fit-text
+-   No very impressive correlations.
+-   But we may not want to calculate correlations involving categorical variables such as `admit` and `rank` at all!
+-   Let's take a look at `gre`.
+:::
+
+## How is `admit` affected by `gre`? {.r-stretch}
+
+```{python}
+#| echo: true
+#| fig-align: "center"
+sns.lmplot(x="gre", y="admit", data=admission, y_jitter = .03)
+plt.show()
+```
+
+-   `lmplot` imposes the simple linear regression curve on the data.
+
+-   The line is the predicted probability of admission, the dots are $0$ if admitted, $1$ if not.
+
+## How is `admit` affected by `gre` per level of `rank`?
+
+```{python}
+#| echo: true
+#| fig-align: "center"
+sns.lmplot(x="gre", y="admit", col = "rank", data=admission, y_jitter = .03,col_wrap = 2)
+plt.show()
+```
+
+## The problem with linear regression.
+
+The third plot indicates the problem: The line may predict an impossible probability!
+
+```{python}
+#| fig-align: "center"
+import numpy as np
+x = np.linspace(0, 1, 11)
+y = np.array([0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1])
+sns.lmplot(x="x", y="y", data=pd.DataFrame({'x':x, 'y':y}))
+plt.show()
+```
+
+-   Fits a line that is greater thant $1$ when $x \approx 1$.
+-   But probabilities are always between $0$ and $1$.
+
+# Regression with link functions
+
+## What we need to do
+
+1.  In linear regression, $E(Y) = \beta^T X$.
+2.  In binary regression, $E(Y) = P(Y=1) = F(\beta^T X)$ for some increasing function $F$ bounded by $0$ and $1$.
+3.  The function $g = F^{-1}$ is called a *link function*.
+4.  Because it links the mean to a linear combination of the parameters $g(E(Y)) = \beta^T X$,
+
+## The logistic function
+
+```{python}
+#| echo: true
+#| fig-align: "center"
+logistic = lambda x: 1/(1 + np.exp(-x))
+x_ = np.linspace(-6, 6, 100)
+plt.plot(x_, logistic(x_))
+plt.show()
+```
+
+## Three important $F$s
+
+| Name             | Link function $g$                         | $g^{-1} = F$              | Where?                       |
+|------------------|-------------------------------------------|---------------------------|------------------------------|
+| Logistic / logit | $\log\left(\frac{x}{1-x}\right)$          | $\frac{1}{1+e^{-x}}$      | Machine learning, statistics |
+| Probit           | $\Phi^{-1}$, the normal quantile function | $\Phi$, the normal CDF    | Economics, statistics        |
+| Cauchit          | $\tan(\pi(x-0.5))$                        | $\frac{1}{\pi}\arctan(x)$ | Used for heavy-tailed data   |
+
+```{python}
+#| echo: false
+#| fig-align: "center"
+from scipy import stats
+import numpy as np
+import matplotlib.pyplot as plt
+x = np.linspace(-3,3,100)
+logistic = lambda x: 1/(1 + np.exp(-x))
+plt.plot(x, logistic(x), label = "Logistic")
+plt.plot(x, stats.norm.cdf(x), label = "Normal")
+plt.plot(x, stats.cauchy.cdf(x), label = "Cauchy")
+plt.legend()
+plt.show()
+
+
+```
+
+## Using `curve_fit`
+
+We can use `stats.curve_fit` to fit binary regression models. $$\min_\beta \sum_{i=1}^{n}(y_{i}-F(x_i^T\beta))^{2},$$
+
+## Using Probit, logit, and the linear model
+
+```{python}
+#| eval: true
+#| fig-align: "center"
+from scipy.optimize import curve_fit
+from scipy import stats
+
+x = np.linspace(0, 1, 11)
+y = np.array([0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1])
+
+func_logistic = lambda x, a, b: logistic(a + b * x)
+param_logistic = curve_fit(func_logistic, x, y)[0]
+
+func_norm = lambda x, a, b: stats.norm.cdf(a + b * x)
+param_norm = curve_fit(func_norm, x, y)[0]
+
+#plt.scatter(x, y)
+x_ = np.linspace(0, 1, 100)
+sns.lmplot(x="x", y="y", data=pd.DataFrame({'x':x, 'y':y}))
+plt.plot(x_, func_norm(x_, param_norm[0], param_norm[1]), color = "red")
+plt.plot(x_, func_logistic(x_, param_logistic[0], param_logistic[1]), color = "black")
+plt.show()
+```
+
+# How to estimate binary regression models
+
+## Maximum likelihood estimation
+
+-   Assume $Y_1,Y_2,\ldots,Y_n$ are sampled iid from the density $f_\theta(y)$.
+-   Then the *maximum likelihood estimator* is $\hat{\theta}_{ML}=\text{argmax}_{\theta}\prod_{i=1}^{n}f(x_{i};\theta)$
+-   The *likelihood* is $$L(\theta)={\prod_{i=1}^{n}f(x_{i};\theta)}$$
+-   The *log-likelihood* is $$l(\theta)={\sum_{i=1}^{n}\log f(x_{i};\theta)}$$
+-   And we have \begin{eqnarray*}
+    \hat{\theta}_{ML} & = & \text{argmax}_{\theta}L(\theta),\\
+     & = & \text{argmax}_{\theta}l(\theta).
+    \end{eqnarray*}
+
+## Example: Normal model
+
+-   **Recall the normal density function.** $$f(x;\mu,\sigma)=\frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{1}{2\sigma^2}(x-\mu)^{2}}$$
+-   **Log-likelihood of** $n$ observations: $$\sum_{i=1}^{n}\log f(x_{i};\mu,\sigma)=-\sum_{i=1}^{n}\frac{1}{2\sigma^2}(x_{i}-\mu)^{2}-n\log(\sqrt{2\pi}\sigma)$$
+-   Differentiate: $\frac{d}{d\mu}\sum_{i=1}^{n}\log f(x_{i};\mu,\sigma)=\sum_{i=1}^{n}\frac{(x_{i}-\mu)}{\sigma^2}$
+-   Set equal to $0$ and obtain $$ \sum_{i=1}^{n}x_{i}=n\mu$$
+-   Hence $\hat{\mu}_{ML}=\frac{1}{n}\sum_{i=1}^{n}x_{i}$, i.e., the maximum likelihood estimator of $\mu$ is the mean.
+
+## General strategy to find maximum likelihood estimators
+
+1.  Take the logarithm of the likelihood.
+2.  Differentiate and solve $l'(\theta) = 0$.
+
+### Not always possible to solve these equations by hand! {.fragment}
+
+## Maximum likelihood: Properties
+
+-   Recall that a consistent estimator is a random variable $\hat{\theta_n}\stackrel{p}{\to}\theta$ as $n\to\infty$. Maximum likelihood estimators are consistent.
+-   Maximum likelihood estimators are *efficient*: An estimator $\hat{\theta_n^1}$ is efficient for $\theta$ if $\theta_n^1$ is consistent for $\theta$ and $\lim_{n\to\infty}\operatorname{Var}\hat{\theta}_n^1\leq \lim_{n\to\infty}\operatorname{Var}\hat{\theta}_n^2$ for every other estimator $\theta_n^2$ consistent for $\theta$. ***Thus the maximum likelihood estimator is the best estimator in the limit!***
+-   **The invariance principle**: If $\hat{\theta}$ is the maximum likelihood estimator of $\theta$ and $g$ is any function, then maximum likelihood estimator of $g(\theta)$ is $g(\hat{\theta})$.
+-   **Example:** What is the maximum likelihood estimator of $\mu^2$ in the normal model $N(\mu, \sigma^2)$?
+-   **Answer:** $\overline{x}^2$.
+-   Be aware that maximum likelihood is the most popular estimation method!
+
+## Least squares and maximum likelihood
+
+-   Suppose the linear model holds: $y_i \mid x_i = \beta^Tx_i + \sigma \epsilon$ where all errors $\epsilon_i$ are independent.
+-   If $\epsilon\sim N(0,1)$, the least squares estimator of $\beta$ is the maximum likelihood estimator of $\beta$!
+-   Since maximum likelihood estimators are efficient, least squares is the best you can do when the residuals are normal.
+-   But do we have a similar motivation for binary regression models?
+
+## Maximum likelihood in binary regression models
+
+-   Let $p_{i}=F(\beta^{T}X)$ be the probability of success for the $i$th covariate vector. Then $$P(Y_{i}\mid X_{i})=\begin{cases}
+    p_{i} & Y_{i}=1,\\
+    1-p_{i} & Y_{i}=0.
+    \end{cases}
+    $$
+-   It follows that he likelihood equals $$L(\beta) = \prod_{i=1}^{n}P(Y_{i}\mid X_{i})=\prod_{i=1}^{n}[p_{i}Y_{i}+(1-p_{i})(1-Y_{i})].$$
+-   Taing logarithms, we find the log-likelihood: $$l(\beta)=\sum_{i=1}^{n}\left[Y_{i}\log p_{i}+(1-Y_{i})\log(1-p_{i})\right].$$
+-   This is the equation that is maximized when using logistic regression. Everyone uses this equation or variants of it.
+
+## Probit and logit using `statsmodels`
+
+-   Probit and logit can be estimated directly.
+
+::: fragment
+```{python .fragment}
+import statsmodels.formula.api as smf
+import statsmodels.api as sm
+probit = smf.probit("admit ~ gre", data=admission).fit()
+logit = smf.logit("admit ~ gre", data=admission).fit()
+```
+:::
+
+-   Harder way, which is needed for link functions other than probit and logit. The family argument says you want binary regressions.
+
+::: fragment
+```{python .fragment}
+mod_logistic = smf.glm(formula="admit ~ gre", data=admission, family=sm.families.Binomial()).fit() 
+print(mod_logistic.summary())
+```
+:::
+
+# The latent variable model
+
+## Formulation of the model
+
+1.  **Regression model**: $Z_{i}=\beta^{T}X_{i}+\epsilon_{i}$
+2.  But $Z_i$ is not observed - it is **latent**.
+3.  We observe $Y_i = 1[Z_i \geq 0]$ instead.
+
+## Normal example
+
+```{python}
+import numpy as np
+rng = np.random.default_rng(seed = 313)
+n = 100
+x = np.linspace(-1, 1, n)
+z = 1 + 2 * x + rng.normal(size = n) # Latent variable
+y = 1 * (z >= 0)
+```
+
+```{python}
+#| echo: false
+import matplotlib.pylab as plt
+plt.scatter(x, z)
+plt.scatter(x, y)
+plt.plot(x, 1 + 2 * x)
+plt.plot(x, 0 * x)
+```
+
+## Estimating
+
+```{python}
+import statsmodels.formula.api as smf
+smf.ols("z ~ x", data = {"x": x, "z": z}).fit().params
+```
+
+```{python}
+smf.probit("y ~ x", data = {"x": x, "y": y}).fit().params
+```
+
+## Three models
+
+| Error ($\epsilon$)                   | Link function        | Model name     |
+|--------------------------------------|----------------------|----------------|
+| $N(0, \sigma)$                       | $\Phi^{-1}(x)$       | Probit model   |
+| $\operatorname{Logistic}(0, \sigma)$ | $\log\frac{x}{1-x}$  | Logistic model |
+| $\operatorname{Cauchy}(0, \sigma)$   | $\tan{[\pi(x-0.5)]}$ | Cauchit        |
+
+$\Phi^{-1}(x)$ is the quantile function for the normal distribution. All of these distributions are *symmetric*, that is, $f(x) = f(-x)$.
+
+## Proof of equivalence
+
+-   Suppose $Z_{i}=\beta^{T}X_{i}+\epsilon_{i}$ with $\epsilon_{i}\sim F$ and define $Y_{i}=1[Z_{i}\geq0]$.
+
+-   Then \begin{eqnarray*} P(Y_{i}=1\mid X_{i}) & = & P(Z_{i}\geq0\mid X_{i}),\\
+     & = & P(\beta^{T}X_{i}+\epsilon_{i}\geq0\mid X_{i}),\\
+     & = & P(\epsilon_{i}\geq-\beta^{T}X_{i}\mid X_{i}),\\
+     & = & 1-F(-\beta^{T}X_{i}).
+    \end{eqnarray*}
+
+-   Thus $G^{-1} = 1-F(-\beta^T X_i)$.
+
+-   If $F$ is symmetric around $0$, i.e., $f(x)=f(-x)$ then $1-F(-x)=F(x)$, hence $G^{-1} = F$
+
+## The scale disappears!
+
+We simulate from a normal with scale = 5:
+
+```{python}
+import numpy as np
+rng = np.random.default_rng(seed = 313)
+n = 100
+x = np.linspace(-1, 1, n)
+z = 1 + 2 * x + rng.normal(size = n, scale = 5) # Latent variable
+y = 1 * (z >= 0)
+```
+
+```{python}
+#| echo: false
+import matplotlib.pylab as plt
+plt.scatter(x, z)
+plt.scatter(x, y)
+plt.plot(x, 1 + 2 * x)
+plt.plot(x, 0 * x)
+```
+
+## The scale of the latent variable is unknown
+
+```{python}
+smf.probit("y ~ x", data = {"x": x, "y": y}).fit().params
+```
+
+And we fit a model with `scale = 1` too:
+
+```{python}
+rng = np.random.default_rng(seed = 313)
+z = 1 / 5 + 2 / 5 * x + rng.normal(size = n, scale = 1)
+y = 1 * (z >= 0)
+smf.probit("y ~ x", data = {"x": x, "y": y}).fit().params
+```
+
+## Why?
+
+1.  We don't know $Z_i$, only $Y_i = 1[Z_i\geq 0]$.
+2.  $1[Z_i\geq 0] = 1[\lambda Z_i\geq 0]$ for all $\lambda>0$.
+3.  That's why the scale disappears!
+4.  That's the only thing that disappears though.
+
+## Example: Marketing research
+
+> How much do you like Coca-Cola? Answer on a scale from -5 to 5?
+
+Such questions have high *cognitive load*! They are hard to answer.
+
+> Do you like Coca-Cola?
+
+Easy to answer! Just say yes or no.
+
+-   The latent variable interpretation of binary regression justifies going from scales to binary variables!
+-   It's also possible to combine both data sources; but that's beyond the scope of this course.
+
+# Interpreting the coefficients
+
+## Two approaches
+
+1.  The latent variable interpretation. Somewhat abstract, but simple enough.
+2.  The approximate relative risk approach. Only for logistic regression though.
+
+## The odds-ratio
+
+-   The *odds* for an event with probability $p$ is defined as $\text{odds} = p/(1-p)$.
+-   In logistic regression, $p = \frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}$.
+-   Hence the odds are $$\frac{\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}}{1-\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}} = \frac{\frac{\exp[\beta^{T}x]}{1+\exp[\beta^{T}x]}}{\frac{1}{1+\exp[\beta^{T}x]}} = \exp[\beta^Tx].$$
+-   The *odds-ratio* is the ratio of odds with probabilities $p$ and $q$. $\text{OR} = \frac{p/(1-p)}{q/(1-q)}$.
+-   In the logistic regression model, the odds-ratio between two covariates $x'$ and $x$ is $$\frac{p/(1-p)}{q/(1-q)} = \frac{\exp[\beta^Tx']}{\exp[\beta^Tx]} = \exp{[\beta^T(x'-x)]}.$$
+
+## The log-odds and relative risk
+
+-   Now suppose that $x' = x$ everywhere except on the $j$th coordinate, where it equals $x+1$. Then $\beta^T(x'-x) = \beta_j$.
+-   From the equation for the odds-ratio we find that $$\frac{p/(1-p)}{q/(1-q)} = \exp{[\beta^T(x'-x)] = \exp{[-\beta_j]}}.$$
+-   Hence the logarithm of the odds-ratio equals $\beta_j$!
+-   The *relative risk* of two events is $\text{RR} = p/q$. How much more probable is $p$ than $q$? *Much* easier to interpret than the odds ratio.
+-   When $p,q$ are small, the odds ratio approximates the relative risk.
+-   So when the probabilities are small, $\exp{[\beta_j]\approx \text{RR}}$ of increasing the value of $x_j$ by $1$.
+
+## Example
+
+```{python}
+mod = smf.probit("admit ~ gre + gpa + rank", data=admission).fit()
+```
+
+To intepret the coefficients we must exponentiate them.
+
+```{python}
+np.exp(mod.params)
+```
+
+Hence increasing `gpa` with 1 increases the probability of being admitted by $60\%$, everything else held equal. Increasing the rank of the university by one decreases the probability by $30\%$ though.
+
+# Summary
+
+1.  We need binary regression models since linear models do not make sense for binary data. In particular, they can predict probabilities outside $[0,1]$.
+2.  Instead, we use link functions $G$ satisfying the property that $G^{-1}$ is a cumulative distribution function. Then we can model $P(Y_i = 1) = G^{-1}(X^T \beta)$.
+3.  The most popular link functions are the probit link and the logit link, used in logistic regression.
+4.  Binary regression models can have a latent variable interpretation connecting them to linear regression.
+5.  Maximum likelihood estimation is the most popular method to generate estimators. Binary regression models are almost always estimated using maximum likelihood, not least squares.
+6.  The parameters of a logistic regression model can be interpreted as the log-odds-ratio and approximate the relative risk.
+7.  Both probit and logit models can be fitted using `statsmodels`, but other link functions require more work.

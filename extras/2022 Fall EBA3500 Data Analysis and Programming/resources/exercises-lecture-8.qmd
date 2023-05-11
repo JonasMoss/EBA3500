@@ -1,0 +1,110 @@
+---
+title: "Exercises for Lecture 8: Binary regression"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+    html:
+      self-contained: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+number-sections: true
+---
+
+## Maximum likelihood
+
+Recall the definition of the maximum likelihood estimator. If $X_1,X_2,\ldots, X_n\sim(\theta)$ are iid for some unknown $\theta$, the maximum likelihood estimator is $$\hat{\theta} =\operatorname{argmax}_\theta \sum_{i=1}^n \log f(X_i;\theta),$$ where $\theta$ can be either a scalar or a vector.
+
+### Bernoulli distribution
+
+Let $X_1, ..., X_n$ be independent $0-1$ variables with success probability $p$, i.e., Bernoulli variables. Use differentiation to show that the maximum likelihood estimator of $p$ is $\hat p = \overline{X}$, the mean of $X_1, ..., X_n$. (*Hint*: Find the expression for the likelihood in the lecture slides or online. Google "differentiation maximization" or something if you have forgotten how to optimize using differentiation.)
+
+### Normal distribution
+
+#### Rederive the maximum likelihood estimator of $\mu$
+
+I showed in class that $\hat{\mu}_{ML} = \overline{x}$, the empirical mean, when the observations $x$ are sampled from a normal distribution $N(\mu,\sigma)$. Try to show this yourself!
+
+#### Maximum likelihood estimator of $\sigma$
+
+Show that the maximum likelihood estimator of $\sigma$ is $\sqrt{\frac{1}{n}\sum_{i=1}^{n}(x_{i}-\overline{x})^{2}}$. (*Hint:* You must use the expression for the maximum likelihood of $\mu$ that you have already derived to derive the maximum likelihood estimator of $\sigma^2$. Then use the [invariance principle](https://stats.stackexchange.com/a/77661/179305).)
+
+### The exponential distribution
+
+#### Maximum likelihood estimator of $\lambda$
+
+Let $X_1,X_2,\ldots,X_n$ be iid from an exponential distribution with density $f(x; \lambda) = \lambda\exp(-\lambda x)$. Calculate the maximum likelihood estimator of $\lambda$. What is the maximum likelihood estimator of $\sin(\lambda)$?
+
+#### Asymptotics of $\hat{\lambda}$
+
+Make a Python function that samples $n$ exponentials with parameter $\lambda = 2$ and calculates its maximum likelihood estimator. Make a histogram out of $N = 10,000$ samples from this function when $n = 100$. What does the histogram look like?
+
+#### Rescaling the histogram
+
+Rescale the histogram, i.e., use $\sqrt{n}(\hat{\lambda}_{ML} -\lambda)$, and display it for $n = 100, 1000, 10000$. What do you see?
+
+#### The asymptotic variance (i)
+
+Use the function in (b) to estimate the *asymptotic variance* $n\operatorname{Var}(\hat{\theta}_{ML})$ as $n$ varies. What do you see?
+
+#### The asymptotic variance (ii)
+
+1.  Calculate $\frac{\partial^2}{\partial\lambda^2}\log f(X;\lambda)$, i.e., the second derivative of the log-density of $X$ with respect to $\lambda$. (*Hint*: Take the logarith first, then differentiate with respect to $\lambda$ twice!)
+2.  Calculate the expectation of the expression you just found, $I(\lambda)=E\left[\frac{\partial^{2}}{\partial\lambda^{2}}\log f(X;\lambda)\right]$
+3.  What is $1/I(\lambda)$ when evaluated in $\lambda = 2$? Do you recognize it?
+
+### The uniform distribution
+
+The uniform distribution on $[0, b]$ has density $$f(x;b)=\begin{cases}
+\frac{1}{b} & 0\leq x\leq b,\\
+0 & \text{otherwise}.
+\end{cases}$$
+
+Let $X_1,X_2,\ldots X_n\sim f(x;b)$.
+
+1.  Verify that $f(x;b)$ is a density.
+2.  Calculate the expectation of $X \sim f(x, b)$. Can you imagine a reasonable estimator of $b$?
+3.  Try to show that the maximum likelihood estimator of $b$ is $\max_{i=1}^n x_i$. (*Hint:* Don't use differentiation!)
+4.  Compare the estimator you derived in (2) to the maximum likelihood estimator using the same techniques as in the exercise on the exponential distribution. But you might have to multiply with $n$ instead of $\sqrt{n}$ for the histograms to stabilize! Which estimator do you prefer, and why?
+
+***N.B.*** This maximum likelihood estimator is *irregular* since it does not follow a normal distribution, as you can observe from the histogram.
+
+## Logistic regression
+
+### Practical regression
+
+[This page](https://www.geo.fu-berlin.de/en/v/soga/Basics-of-statistics/Logistic-Regression/Logistic-Regression-in-R---An-Example/index.html) works with logistic regression on a particular dataset.
+
+#### Download data
+
+Load the data set at `https://userpage.fu-berlin.de/soga/200/2010_data_sets/hurricanes.xlsx` into a data frame `hurricanes`. Make a `sns.pairplot` and look at the correlation matrix. For more information about the data, look at the link. Some of the correlations are extremely high. Why? (*Hint*: Look at the lecture notes. Be sure to remove columns that aren't numeric using [`drop`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop.html). You can use `df.corr()` to calculate the correlation matrix.)
+
+#### Correlation plot
+
+The correlation matrix is hard to read. Modify the code from [here](https://seaborn.pydata.org/examples/many_pairwise_correlations.html) or [here](https://medium.com/@szabo.bibor/how-to-create-a-seaborn-correlation-heatmap-in-python-834c0686b88e) to make it readable. (*Hint:* Start out with `sns.heatmap(dataframe.corr())`.)
+
+#### Fitting a logistic regression
+
+Make a new column in `hurricanes` called `Type.new`. A value in this column equals $0$ if `Type == 0` and $1$ otherwise. Use `sns.lmplot` to plot a logistic regression `"Type_new ~ FirstLat"`. (*Hint:* First make a column `c` that is $1$ if `Type == 0` and $0$ otherwise. Then modify it to be $0$ if `Type == 0` and $1$ otherwise using `1 - c`, or `(1 - 1 * (hurricanes["Type"] == 0))`.)
+
+#### Finding other predictors
+
+Using the `Type.new` variable as a response, find other reasonable predictors and plot them. (*Hint:* Can you use `hurricanes.corr()` for this?)
+
+### Link functions
+
+We don't have to use the logistic or probit function, as `statsmodels` support many more. Consult the documentation for `statsmodels` and try out the Cauchy link function on the data set of the previous exercise. For instance, the probit link would look like:
+
+```{python}
+#| eval: false
+mod_probit = smf.glm(formula="Type_new ~ FirstLat", data=hurricanes, family=sm.families.Binomial(sm.genmod.families.links.probit())).fit()
+```
+
+The documentation for the link functions is [here.](https://www.statsmodels.org/stable/glm.html#link-functions) It may be hard to get things to run, but persevere!
+
+Now plot the predicted values in the same plot, as we did in the lectures with probit and logit, with different colors for each. Is there i noticable difference in the curves?

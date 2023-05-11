@@ -1,0 +1,469 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\begin_modules
+theorems-std
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Notes for video 
+\begin_inset Formula $8$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Author
+Jonas Moss
+\end_layout
+
+\begin_layout Date
+23/3/2021
+\end_layout
+
+\begin_layout Standard
+Let's take a look at the null-hypothesis
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+H_{0}:\textrm{the data is normal with underlying mean }\mu\textrm{ and standard deviation \ensuremath{\sigma}}.
+\]
+
+\end_inset
+
+This is a simple null-hypothesis, usually denoted as 
+\begin_inset Formula $N(\mu,\sigma)$
+\end_inset
+
+.
+ We can easily simulate 
+\begin_inset Formula $n$
+\end_inset
+
+ data points from this null-hypothesis in Python using 
+\begin_inset Formula $\texttt{rng.normal(mu, sigma, n)}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+A famous test statistic for 
+\begin_inset Formula $H_{0}$
+\end_inset
+
+ is the 
+\begin_inset Formula $Z$
+\end_inset
+
+-test
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Z=\sqrt{n}\frac{\overline{x}-\mu}{\sigma}\label{eq:z-test}
+\end{equation}
+
+\end_inset
+
+which you have learned is normally distributed with mean 
+\begin_inset Formula $0$
+\end_inset
+
+ and standard deviation 
+\begin_inset Formula $1$
+\end_inset
+
+ under the null-hypothesis 
+\begin_inset Formula $N(\mu,\sigma)$
+\end_inset
+
+.
+ Again, this is easy to calculate in Python.
+ This test statistic makes most sense if the alterntive hypothesis has a
+ different mean than 
+\begin_inset Formula $H_{0}$
+\end_inset
+
+, something like
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+H_{a}:\textrm{the data does not have underlying mean }\mu\textrm{, but has standard deviation \ensuremath{\sigma}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Recall the definition of a 
+\emph on
+p
+\emph default
+-value, taken from Wikipedia, 
+\begin_inset Quotes eld
+\end_inset
+
+the probability of obtaining test results at least as extreme as the results
+ actually observed, under the assumption that the null hypothesis is correct.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In terms of probability, the definition of the observed two-sided 
+\emph on
+p
+\emph default
+-value is
+\begin_inset Formula 
+\begin{equation}
+p=P(|Z|\geq|z|)=1-F(z),\label{eq:p-value, observed}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $Z$
+\end_inset
+
+ is the random test statistic and 
+\begin_inset Formula $z$
+\end_inset
+
+ is the observed value of the test statistic and 
+\begin_inset Formula $F(z)=P(|Z|\leq z)$
+\end_inset
+
+ is the distribution function of 
+\begin_inset Formula $|Z|$
+\end_inset
+
+.
+ The variable 
+\begin_inset Formula $|Z|$
+\end_inset
+
+ is well-known and called a folded normal, see Wikipedia for details.
+ Since 
+\begin_inset Formula $\mu=0$
+\end_inset
+
+ and 
+\begin_inset Formula $\sigma=1$
+\end_inset
+
+ it also equals a standard half-normal, which we will use in programming.
+ I repeat that this is the definition of the 
+\emph on
+observed
+\emph default
+ 
+\emph on
+p
+\emph default
+-value.
+ Since 
+\begin_inset Formula $z$
+\end_inset
+
+ isn't random, 
+\begin_inset Formula $p$
+\end_inset
+
+ is not random either.
+ 
+\end_layout
+
+\begin_layout Standard
+We will need the distribution of the 
+\emph on
+p
+\emph default
+-value under the null-hypothesis.
+ As it's written now, 
+\begin_inset Formula $p$
+\end_inset
+
+ is an observed quantity.
+ To calculate its distribution, we must endow 
+\begin_inset Formula $z$
+\end_inset
+
+ with a distribution.
+ So let 
+\begin_inset Formula $Z\sim N(0,1)$
+\end_inset
+
+ and observe that the 
+\emph on
+p
+\emph default
+-value, as a random variable, equals
+\begin_inset Formula 
+\[
+p=1-F(|Z|).
+\]
+
+\end_inset
+
+(We would usually use capital letters for random variables, but 
+\begin_inset Formula $P$
+\end_inset
+
+ is already taken, and we'll have to use 
+\begin_inset Formula $p$
+\end_inset
+
+ even though it is random.) The distribution of this random variable equals
+\begin_inset Formula 
+\[
+P(p\leq x)=P(1-F(Z)\leq x)=P(1-x\leq F(Z)).
+\]
+
+\end_inset
+
+Since 
+\begin_inset Formula $F$
+\end_inset
+
+ is strictly increasing, its inverse 
+\begin_inset Formula $F^{-1}$
+\end_inset
+
+ exists, and
+\begin_inset Formula 
+\[
+P(1-x\leq F(Z))=P(F^{-1}(1-x)\leq Z).
+\]
+
+\end_inset
+
+However, 
+\begin_inset Formula $P(z\leq Z)=1-F(z)$
+\end_inset
+
+, where 
+\begin_inset Formula $F(z)$
+\end_inset
+
+ is the distribution of 
+\begin_inset Formula $Z$
+\end_inset
+
+.
+ Hence
+\begin_inset Formula 
+\[
+P(F^{-1}(1-x)\leq Z)=1-F(F^{-1}(1-x)),
+\]
+
+\end_inset
+
+and as 
+\begin_inset Formula $F^{-1}$
+\end_inset
+
+ is the inverse of 
+\begin_inset Formula $F$
+\end_inset
+
+, we get that 
+\begin_inset Formula $F(F^{-1}(1-x))=1-x$
+\end_inset
+
+.
+ Combining all of this we obtain
+\begin_inset Formula 
+\[
+P(p\leq x)=P(F^{-1}(1-x)\leq Z)=1-(1-x)=x.
+\]
+
+\end_inset
+
+We recognize this as the distribution function of a uniform random variable.
+\end_layout
+
+\begin_layout Proposition
+p-values are uniformly distributed.
+\end_layout
+
+\begin_layout Standard
+This result has a curious implications for simulation, which we will explore.
+\end_layout
+
+\begin_layout Example
+If the observed 
+\emph on
+p
+\emph default
+-value is 
+\begin_inset Formula $0.27$
+\end_inset
+
+, the probability of observing a 
+\emph on
+p
+\emph default
+-value less than or equal to 
+\begin_inset Formula $0.27$
+\end_inset
+
+ is equal to 
+\begin_inset Formula $0.27$
+\end_inset
+
+ under the nullhypothesis.
+ This is the area of the red rectangle in the image of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:p-values"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename python_video_8.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:p-values"
+
+\end_inset
+
+Example of a 
+\emph on
+p
+\emph default
+-value
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

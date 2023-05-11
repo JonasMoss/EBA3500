@@ -1,0 +1,12 @@
+# Constructing estimators
+
+## Curriculum
+
+### Core readings
+1. Dekking et al., Chapter 21: Maximum likelihood
+
+2. Dekking et al., Chapter 22: The method of least squares
+
+## Exercises
+
+## Additional resources

@@ -1,0 +1,88 @@
+---
+title: "Exercises for Lecture 9: Binary regression (ii)"
+subtitle: "EBA3500 Data analysis with programming"
+author: "Jonas Moss"
+institute: BI Norwegian Business School </br> Department of Data Science and Analytics
+format: 
+    html:
+      self-contained: true
+editor: visual
+execute:
+  cache: true
+  enabled: true
+  output: true
+  freeze: auto
+jupyter: python3
+number-sections: true
+---
+
+## Maximum likelihood and univariate distributions
+
+Recall that $\sqrt{n}(\hat{\theta} - \theta) \to N(0, I(\theta)^{-1})$, where $I(\theta)$ is the Fisher information. When $\theta$ is a scalar, you can use this information to construct confidence intervals for $\theta$ using the $Z$-interval construction. A $(1-\alpha)\%$ confidence interval for $\theta$ is $$CI(\theta; 1-\alpha) = [\hat{\theta} - \Phi^{-1}(1-\alpha/2)\sqrt{I(\theta)^{-1}}/\sqrt{n}, \hat{\theta} + \Phi^{-1}(1-\alpha/2)\sqrt{I(\theta)^{-1}}/\sqrt{n}],$$where $\Phi^{-1}$ is the quantile function of the normal distribution, called `ppf` in Scipy. Recall that $$\Phi^{-1}(1-\alpha/2)\approx 1.96$$ when $\alpha = 0.95$ and $$\Phi^{-1}(1-\alpha/2)\approx 1.64$$ when $\alpha = 0.90$.
+
+### Poisson distribution
+
+Let $f(k;\lambda)=\frac{\lambda^{k}e^{-\lambda}}{k!}$ be the pmf of a Poisson distribution with parameter $\lambda$. The Poisson distribution is used to event counts when the probability of an event happening is very small but there are many occasions where an event can happen. It is used, e.g., for modeling the number of insurance claims.
+
+1.  Plot the Poisson pmf for $\lambda=1,4,10$.
+2.  Calculate the maximum likelihood estimator of $\lambda$.
+3.  Calculate the mean and variance of $X$ when $X$ is Poisson distributed with parameter $\lambda$.
+4.  Calculate the Fisher information of $\lambda$.
+5.  Use the asymptotic theory of maximum likelihood estimation to derive a confidence interval for $\lambda$.
+6.  Using the [annual fatal car crash data](https://www.statista.com/statistics/437961/number-of-road-deaths-in-norway/), estimate $\lambda$ and calculate a $95\%$ confidence interval for $\lambda$.
+
+```{python}
+crashes = [242, 233, 255, 212, 208, 168, 145, 187, 147, 117, 135, 106, 108, 108, 93]
+```
+
+7.  Do you think using a Poisson distribution is reasonable for this data? (***Hint:*** Try to simulate from the Poisson distribution with the estimated parameters and see what it looks like; compare to the graph on the linked site.)
+
+### Rayleigh distribution
+
+Let $f(x;\sigma)=\frac{x}{\sigma^{2}}e^{-x^{2}/(2\sigma^{2})}$ be the density of a Rayleigh distributed variable with parameter $\sigma$ and let $X$ be Rayleigh distributed with parameter $\sigma$.
+
+1.  Verify that $f(x;\sigma)$ is a *bona fide* density.
+2.  Plot the Rayleigh density for $\sigma=0.5,1,2,3$.
+3.  Find the expression for the CDF $F(x;\sigma)=F(X\leq x)$.
+4.  Suppose $\sigma=50$. What is the probability that $X$ is at most 100? Or less than 100? At least 50?
+5.  Calculate the maximum likelihood estimator of $\sigma$.
+6.  Calculate the Fisher information of $\sigma$.
+7.  Use the asymptotic theory of maximum likelihood estimation to derive a confidence interval for $\sigma$.
+8.  Use the following data of "blood plasma beta concentration (in pmol/L) for $n=10$ men" (Devore & Berk 2011, p. 349) to estimate $\sigma$ and calculate a $95\%$ confidence interval for $\sigma$.
+
+```{python}
+plasma = [16.88, 10.23, 4.59, 6.66, 13.68, 14.23, 19.87, 9.40, 6.51, 10.95]
+```
+
+## Logistic regression modelling
+
+### Marketing data
+
+```{python}
+import pandas as pd
+url = "https://raw.githubusercontent.com/madmashup/targeted-marketing-predictive-engine/master/banking.csv"
+bank = pd.read_csv(url)
+bank.head()
+```
+
+> The dataset comes from the UCI Machine Learning repository, and it is related to direct marketing campaigns (phone calls) of a Portuguese banking institution. The classification goal is to predict whether the client will subscribe (1/0) to a term deposit (variable y). The dataset can be downloaded from here. [*Source*](https://towardsdatascience.com/building-a-logistic-regression-in-python-step-by-step-becd4d56c9c8).
+
+See the linked page for a description of the data set. We are interested in prediction the value `y`.
+
+1.  Fit the model `"y ~ job + marital"` to the data using the logistic model. How can you interpret the parameters?
+2.  Can the parameters of the model `"y ~ job + marital"` be interpreted in the same way when using a Probit model? Explain.
+3.  Fit the models `"y ~ job"` and `"y ~ job + marital"`. Which do you prefer?
+4.  Fit at least 5 other models and select the best one. Make sure to try at least two link functions.
+
+### Endometrial data
+
+Load the endometrial data, available at the Github rep under the "resources folder.
+
+```{python}
+import pyreadr
+endometrial = pyreadr.read_r("endometrial.Rda")["endometrial"]
+```
+
+1.  Run a logistic regression with `"HG ~ NV + PI + EH"`. What happens with with the coefficient for `NV`?
+2.  Look at the outcome `HG` when `NV=1`. What do you see? What effects does this have on the maximum likelihood estimate of `NV`?
+3.  Modify the data frame `endometrial` to make the problem go away.

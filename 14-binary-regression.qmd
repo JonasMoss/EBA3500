@@ -1,0 +1,12 @@
+# Binary regression
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+* James et al., Chapters 4.1 - 4.3, 4.7.1 - 4.7.7
+
+## Exercises
+
+## Recommended resources

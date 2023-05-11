@@ -1,0 +1,76 @@
+# EBA3500 Data Analytics with Programming
+
+## Introduction
+
+This course introduces the basics of statistics and machine learning in the context of Python.
+
+* Inferential statistics, such as the bootstrap, *p*-values, and confidence intervals.
+* Methods to construct and evaluate statistical estimators.
+* The basics of the two most important regressions models: Linear regression and logistic regression.
+
+In addition, the course introduces to the Python packages NumPy, SciPy, and statsmodels.
+
+## Learning outcomes: Knowledge
+Upon completion of this course the student shall be able to:
+
+* Understand, explain, and use fundamental statistical concepts such:
+  * Population values and estimators.
+  * Construction of estimators using maximum likelihood.
+  * Unbiased estimators.
+  * Mean squared error.
+  * Statistical tests. 
+  * Type I and type II errors.
+  * *p*-values.
+  * Confidence intervals.
+  * Basic bootstrap.
+  * Rudimentary exploratory data analysis.
+  * Data summaries such as the mean, standard deviation, and kurtosis.
+
+* Understand the key differences between statistics and machine learning.
+* Understand how to evaluate the performance of machine learning models.
+* Understand and explain the fundamentals of linear regression modeling and logistic regression.
+* Understand and explain the role of ANOVA and omnibus tests in science. 
+
+## Learning outcomes: Skills
+Upon completion of this course the student shall be able to:
+
+* Do vectorized computations in NumPy.
+* Run statistical simulations using NumPy and SciPy.
+* Do reasonable exploratory data analysis in Python, including the construction of graphs.
+* Construct novel estimators for population values.
+* Decide between estimators in a principled way.
+* Calculate confidence intervals, *p*-values, and test statistics in both traditional and new settings.
+* Program bootstrap procedures for statistical inference.
+* Implement complex linear regressions and logistic regressions in Python and make sense of their output.
+* Carry out simple ANOVA experiments.
+
+## General competence
+Upon completion of the course the student shall have stronger competence in:
+
+* Making sound statistical judgments.
+* Using online resources to solve problems.
+* Working independently on difficult problems.
+* Reading and understanding technical documentation.
+
+## Course content
+
+* NumPy and SciPy.
+* Statistical simulation in Python.
+* Exploratory data analysis.
+* Statistic models and the bootstrap.
+* Unbiased estimators and the efficiency of estimators.
+* Construction of estimators.
+* Confidence intervals.
+* Hypothesis tests and *p*-values.
+* The *t*-test.
+* Foundations of machine learning.
+* Linear regression.
+* Inference for linear regression.
+* Linear regression using categorical covariates (ANOVA).
+* Binary regression, such as logistic regression.
+
+## Teaching and learning activities
+
+* Video lectures.
+* Lab sessions where the teacher helps students with problems.
+* Homework exercises
