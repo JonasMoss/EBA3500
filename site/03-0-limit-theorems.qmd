@@ -1,10 +1,13 @@
-# Categorical variables and ANOVA
+# Limit theorems
 
 ::: callout-important
 This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
 :::
 
-## Curriculum
+## Curriculu
+1.  Dekking et al., Chapter 13: The law of large numbers
+
+2.  Dekking et al., Chapter 14: The central limit theorem
 
 ## Exercises
 
