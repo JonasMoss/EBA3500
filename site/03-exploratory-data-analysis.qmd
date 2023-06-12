@@ -11,7 +11,7 @@
 
 #### Using `seaborn` for graphical summaries
 
-#### Numpy and scipy for numerica summaries
+#### Numpy and scipy for numerical summaries
 
 ## Exercises
 

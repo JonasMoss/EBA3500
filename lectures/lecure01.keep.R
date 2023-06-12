@@ -1,0 +1,6 @@
+### Scipy exercises
+You will have to use to Scipy documention to solve these exercises. You should also use wikipedia liberally. Always remember, if you struggle a lot with an exercise, try the next one! You can always come back later.
+1. **Exponential distribution.** Calculate the mean and standard deviation of the exponential distribution with scale parameter $\lambda$ using Scipy. Use wikipedia to find the true values of the mean and standard deviation. Do they match?
+  2. **Normal distribution.** Use Scipy to calculate all $k$th moments (i.e., the expectation $E(X^k)$) of a normal distribution with mean $0$ and $\sigma=1,2$, $k < 20$. Do you notice a pattern? Use wikipedia to figure out exactly what the pattern is. 
+3. **Plotting.** Make a function that creates a plot a `pdf` for user-specified bounds and an object of class `scipy.stats._continuous_distns`. The function should look `plotter(obj, lower = 0, upper = 4)`.
+4. **Nakagami distribution.** The Nakagami distribution is a special case of the gamma distribution, but with a different parameterization. Figure out how to translate the parameters of the Nakagami distribution to the parameters of the gamma distribution. Then plot both densities in the same window to verify your calculations. Use $\nu = 3$ in the Nakagami distribution.

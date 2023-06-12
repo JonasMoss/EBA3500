@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.475">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Data analysis with Programming - 1&nbsp; Introduction to Numpy</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<link href="../site/02-statistical-simulation.html" rel="next">
+<link href="../site/00-python-tips.html" rel="prev">
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to <code>Numpy</code></span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Data analysis with Programming</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/bi-ds/EBA-3500/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/00-python-tips.html" class="sidebar-item-text sidebar-link">Python tips</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/01-scipy-numpy.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to <code>Numpy</code></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/02-statistical-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical simulation and limit theorems</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/03-exploratory-data-analysis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Exploratory data analysis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/04-statistical-models.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Basic statistical models and the bootstrap</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/05-unbiased-estimators-efficiency.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Unbiased estimators and efficiency</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/06-constructing-estimators.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Constructing estimators</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/07-confidence-intervals.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Confidence intervals</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/08-testing-hypotheses.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Testing hypotheses</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/09-testing-the-sample-mean.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Testing the sample mean</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/10-statistical-learning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Statistical learning, machine learning, and statistics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/11-basics-of-linear-regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Basics of multiple linear regression</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/12-inference-for-linear-regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Inference for multiple linear regression</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../site/14-binary-regression.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Binary regression</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#curriculum" id="toc-curriculum" class="nav-link active" data-scroll-target="#curriculum"><span class="toc-section-number">1.1</span>  Curriculum</a>
+  <ul class="collapse">
+  <li><a href="#numpy" id="toc-numpy" class="nav-link" data-scroll-target="#numpy"><span class="toc-section-number">1.1.1</span>  Numpy</a></li>
+  <li><a href="#the-speed-of-numpy" id="toc-the-speed-of-numpy" class="nav-link" data-scroll-target="#the-speed-of-numpy"><span class="toc-section-number">1.1.2</span>  The speed of <code>Numpy</code></a></li>
+  </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="toc-section-number">1.2</span>  Exercises</a>
+  <ul class="collapse">
+  <li><a href="#data-types" id="toc-data-types" class="nav-link" data-scroll-target="#data-types"><span class="toc-section-number">1.2.1</span>  Data types</a></li>
+  <li><a href="#benchmarking-and-numpy" id="toc-benchmarking-and-numpy" class="nav-link" data-scroll-target="#benchmarking-and-numpy"><span class="toc-section-number">1.2.2</span>  Benchmarking and Numpy</a></li>
+  <li><a href="#numpy-exercises" id="toc-numpy-exercises" class="nav-link" data-scroll-target="#numpy-exercises"><span class="toc-section-number">1.2.3</span>  Numpy exercises</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction to <code>Numpy</code></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this course we’ll several external Python libraries. If you have trouble installing Python locally, you can always use <a href="https://colab.research.google.com">Google Colab</a>.</p>
+<ol type="1">
+<li><code>Numpy</code>, the fundamental package for scientific computing with Python. Numpy does all the heavy mathematical lifiting, such as matrix multiplication and summing. We use Numpy due to its <em>speed</em> and <em>convenience</em>. The syntax of Numpy is very similar to that of <a href="https://www.tensorflow.org">TensorFlow</a>, which is used extensively in heavy-duty machine learning applications.</li>
+<li><code>Pandas</code> deals with data frames. Most of our data will be on the Pandas format.</li>
+<li><code>statsmodels</code>. Statsmodels is the Python package for basic statistical analysis in Python. It closely mimics <code>R</code> in syntax and functionality.</li>
+<li><code>scikit-learn</code> is somewhat similar to statsmodels, but contains much more functionality and is geared towards <a href="https://towardsdatascience.com/the-actual-difference-between-statistics-and-machine-learning-64b49f07ea3">machine learning instead of statistics</a>.</li>
+<li><code>matplotlib</code>, the basic plotting library in Python.</li>
+<li><code>seaborn</code>. A package that simplifies plotting.</li>
+<li><code>tinybench</code>. Used for doing benchmarks, i.e., timing how long functions take to run. You can learn a lot about how to write efficient code by routinely using this package while coding. It’s also quite fun - optimizing code is one of the pleasures of programming, and <code>tinybench</code> makes it easy to check if any of your optimizations make sense.</li>
+</ol>
+<section id="curriculum" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="curriculum"><span class="header-section-number">1.1</span> Curriculum</h2>
+<ol type="1">
+<li><a href="https://numpy.org/doc/stable/user/absolute_beginners.html">Numpy for absolute beginners</a></li>
+<li>The notes on this webpage.</li>
+</ol>
+<section id="numpy" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="numpy"><span class="header-section-number">1.1.1</span> Numpy</h3>
+<p>I sometimes write that you should <em>familiarize yourself with</em> the documentation. This means that you should: 1. Fire up an instance of <a href="https://code.visualstudio.com">Visual Studio Code</a> (recommended), Jupyter Notebook, or your prefered way to write Python. 2. Go to the supplied links and <em>actively</em> read them. You can’t just print out the documents and read them in the shade of a tree. You should make an hypothesis about how a snippet of code works, copy the Python code to your editor, and then modify it to check if your hypothesis is true.</p>
+</section>
+<section id="the-speed-of-numpy" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="the-speed-of-numpy"><span class="header-section-number">1.1.2</span> The speed of <code>Numpy</code></h3>
+<p>Python is very slow language. So slow, in fact, that most optimizations in Python is about moving as many computations as possible to Numpy.</p>
+<p>The following function sums up all numbers from <span class="math inline">\(1..n\)</span> in vanilla Python.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_python(n):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> <span class="bu">range</span>(<span class="dv">0</span>, n)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  acc <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> numbers:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> acc <span class="op">+</span> i</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The function below uses Numpy for the same task.</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_numpy(n):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> np.arange(<span class="dv">0</span>, n, dtype <span class="op">=</span> np.int64)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> numbers.<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Both functions return the same value.</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sum_python(<span class="dv">10</span> <span class="op">**</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>499999500000</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sum_numpy(<span class="dv">10</span> <span class="op">**</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>499999500000</code></pre>
+</div>
+</div>
+<p>The Numpy code is arguably easier to read. There is no doubt what the <code>.sum</code> method does.</p>
+<p>We use the <code>dtype = np.int64</code> argument in the <code>np.arange</code> function. This makes <code>int64</code> the data type of the resulting Numpy array. These are 64 bits (signed) integers, but the standard is 32 bits integer. The difference between these lie in their maximum and minimum values. The maximal value of a 64 bits integer is <code>9,223,372,036,854,775,807</code>, but the maximal value of an <code>i32</code> is merely <code>2,147,483,647</code>. You have to manually specify <code>i64</code> when dealing with big integers in Numpy, but you do not need to do that in Python, as it can use integers of arbitrary size, at the cost of speed. You can always find the data type of a Numpy object using the <code>.dtype</code> method, e.g.,</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">0</span>, <span class="dv">10</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x.dtype</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>dtype('int32')</code></pre>
+</div>
+</div>
+<p>We compare the execution speed of these functions using the <code>benchmark</code> function from the <code>tinybench</code> package. As always, type <code>help(benchmark)</code> in a Python interpreter to get help for the function. Below, we sample <code>ntimes = 10</code> and use a warm up of <code>10</code> (to get the processor running). The <code>g</code> argument tells <code>benchmark</code> where to find the functions in the list, and the argument <code>globals()</code> tells it to look at the top level.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tinybench <span class="im">import</span> benchmark, benchmark_env</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>bench <span class="op">=</span> benchmark([<span class="st">'sum_python(10 ** 6)'</span>, <span class="st">'sum_numpy(10 ** 6)'</span>], ntimes <span class="op">=</span> <span class="dv">100</span>, warmup <span class="op">=</span> <span class="dv">10</span>, g <span class="op">=</span> <span class="bu">globals</span>())</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>bench.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01-scipy-numpy_files/figure-html/cell-7-output-1.png" width="662" height="470"></p>
+</div>
+</div>
+<p>The Numpy version is much faster. To pinpoint by exactly how much, we need to look at the mean execution times.</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>bench.means</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>bench.means[<span class="st">'sum_python'</span>] <span class="op">/</span> bench.means[<span class="st">'sum_numpy'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>10.571063624202676</code></pre>
+</div>
+</div>
+<p>The Numpy implementation is roughly <span class="math inline">\(10\)</span> times faster. One can expect speedups even larger than this in more complex applications.</p>
+</section>
+</section>
+<section id="exercises" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="exercises"><span class="header-section-number">1.2</span> Exercises</h2>
+<section id="data-types" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="data-types"><span class="header-section-number">1.2.1</span> Data types</h3>
+<section id="exercise-1" class="level4" data-number="1.2.1.1">
+<h4 data-number="1.2.1.1" class="anchored" data-anchor-id="exercise-1"><span class="header-section-number">1.2.1.1</span> Exercise 1</h4>
+<p>Figure out the answer the following questions, using e.g.&nbsp;the Numpy documentation. (Look up the functions <code>iinfo</code>).</p>
+<ol type="1">
+<li>What is the minimal value of a 32 bit integer in Numpy?</li>
+<li>What is the minimal value of a 64 bit integer in Numpy?</li>
+<li>Is there an integer type even larger than <code>int64</code>, provided you restrict yourself to non-negative numbers, i.e., <em>unsigned</em> integers?</li>
+</ol>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first two questions can be answered by</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>np.iinfo(np.int32)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>iinfo(min=-2147483648, max=2147483647, dtype=int32)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>np.iinfo(np.int64)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>iinfo(min=-9223372036854775808, max=9223372036854775807, dtype=int64)</code></pre>
+</div>
+</div>
+<p>For the last question: Yes, the unsigned integers <code>uint64</code> are larger.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>np.iinfo(np.uint64)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>iinfo(min=0, max=18446744073709551615, dtype=uint64)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-2" class="level4" data-number="1.2.1.2">
+<h4 data-number="1.2.1.2" class="anchored" data-anchor-id="exercise-2"><span class="header-section-number">1.2.1.2</span> Exercise 2</h4>
+<p>Decimal numbers in computer science are called <em>floats</em>, or floating point numbers. (Look up the functions <code>finfo</code>).</p>
+<ol type="1">
+<li>What types of floats are available in Numpy?</li>
+<li>What is the default float type when using <code>linspace</code>?</li>
+<li>What are the maximal and minimal values of these float types?</li>
+</ol>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>We have <code>np.float16</code>, <code>np.float32</code> and <code>np.float64</code>.</li>
+<li>Using <code>np.linspace(0, 1, 4).dtype</code> we find that <code>float64</code> is the default data type.</li>
+<li>We can read that from the results below:</li>
+</ol>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>np.finfo(np.float64)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>finfo(resolution=1e-15, min=-1.7976931348623157e+308, max=1.7976931348623157e+308, dtype=float64)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="benchmarking-and-numpy" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="benchmarking-and-numpy"><span class="header-section-number">1.2.2</span> Benchmarking and Numpy</h3>
+<section id="exercise-1-1" class="level4" data-number="1.2.2.1">
+<h4 data-number="1.2.2.1" class="anchored" data-anchor-id="exercise-1-1"><span class="header-section-number">1.2.2.1</span> Exercise 1</h4>
+<p>Python implements a method <code>sum</code> that sums every member of an <em>iterable</em> such as list. Implement a function <code>sum_python2</code> that uses <code>sum</code> instead of a for-loop, but does not use Numpy. Compare its performance to <code>sum_python</code> above. What do you see?</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_python2(n):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> <span class="bu">range</span>(<span class="dv">0</span>, n)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">sum</span>(numbers)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tinybench <span class="im">import</span> benchmark, benchmark_env</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>bench <span class="op">=</span> benchmark([<span class="st">'sum_python(10 ** 6)'</span>, <span class="st">'sum_python2(10 ** 6)'</span>, <span class="st">'sum_numpy(10 ** 6)'</span>], ntimes <span class="op">=</span> <span class="dv">100</span>, warmup <span class="op">=</span> <span class="dv">10</span>, g <span class="op">=</span> <span class="bu">globals</span>())</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>bench.plot()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01-scipy-numpy_files/figure-html/cell-13-output-1.png" width="661" height="470"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-2-1" class="level4" data-number="1.2.2.2">
+<h4 data-number="1.2.2.2" class="anchored" data-anchor-id="exercise-2-1"><span class="header-section-number">1.2.2.2</span> Exercise 2</h4>
+<p>Write a function that squares and sums the numbers from <code>1</code> to <code>n</code>, one in Numpy and one in pure Python. Roughly how much faster is the Numpy implementation than the Python implementation when using <code>n=1000</code>, <code>n=10000</code>, or <code>n=10**6</code>? (<em>Hint</em>: Make sure to use a Numpy function to square all the elements!)</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_sq_python(n):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> <span class="bu">range</span>(<span class="dv">0</span>, n)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  acc <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> numbers:</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> acc <span class="op">+</span> i<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> acc</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> sum_sq_numpy(n):</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> np.arange(<span class="dv">0</span>, n, dtype <span class="op">=</span> np.int64)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> np.square(numbers).<span class="bu">sum</span>()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tinybench <span class="im">import</span> benchmark, benchmark_env</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>bench <span class="op">=</span> benchmark([<span class="st">'sum_sq_python(10 ** 6)'</span>, <span class="st">'sum_sq_numpy(10 ** 6)'</span>], ntimes <span class="op">=</span> <span class="dv">100</span>, warmup <span class="op">=</span> <span class="dv">10</span>, g <span class="op">=</span> <span class="bu">globals</span>())</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>bench.plot()  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01-scipy-numpy_files/figure-html/cell-14-output-1.png" width="662" height="470"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>bench.means[<span class="st">'sum_sq_python'</span>] <span class="op">/</span> bench.means[<span class="st">'sum_sq_numpy'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>44.68929493903305</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="exercise-3" class="level4" data-number="1.2.2.3">
+<h4 data-number="1.2.2.3" class="anchored" data-anchor-id="exercise-3"><span class="header-section-number">1.2.2.3</span> Exercise 3</h4>
+<p>Recall that the sample variance is defined as <span class="math inline">\(\sum (x_i - \overline{x})^2 / (n-1)\)</span>, where <span class="math inline">\(\overline{x}\)</span> is the sample mean and <span class="math inline">\(n\)</span> is the number of observations. Compare a Numpy-free implantation to the <code>var</code> method of <code>Numpy</code> (using the optional argument <code>ddof = 1</code>.), on the numbers from <code>1 .. 10 ** 5</code>, but this time, let <code>dtype = float64</code>. Be sure to check that your functions return the same result!</p>
+<p>(<em>Note</em>: You algorithm and <code>Numpy</code> might give different results for very large <code>n</code>. This is due to a phenomenon called <a href="https://en.wikipedia.org/wiki/Numerical_stability">numerical instability</a>, which we ignore in this course.)</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> var_python(n):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> <span class="bu">range</span>(<span class="dv">0</span>, n)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  mean <span class="op">=</span> <span class="bu">sum</span>(numbers) <span class="op">/</span> n</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">sum</span>([(x <span class="op">-</span> mean) <span class="op">**</span> <span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> numbers]) <span class="op">/</span> (n <span class="op">-</span> <span class="dv">1</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> var_numpy(n):</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  numbers <span class="op">=</span> np.arange(<span class="dv">0</span>, n, dtype <span class="op">=</span> np.float64)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> numbers.var(ddof <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>var_numpy(<span class="dv">10</span><span class="op">**</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>833341666.6666666</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>var_python(<span class="dv">10</span><span class="op">**</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>833341666.6666666</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="numpy-exercises" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="numpy-exercises"><span class="header-section-number">1.2.3</span> Numpy exercises</h3>
+<section id="exercise-1-2" class="level4" data-number="1.2.3.1">
+<h4 data-number="1.2.3.1" class="anchored" data-anchor-id="exercise-1-2"><span class="header-section-number">1.2.3.1</span> Exercise 1</h4>
+<p>How do you do the following in Numpy? Make sure to make your own example in Python! 1. Make an identity matrix with <code>n</code> rows? 2. Make a matrix consisting of <span class="math inline">\(0\)</span>s only? 3. Calculate the empirical mean of a vector? 4. Calculate the standard deviation of a vector normalized so that the variance is unbiased? (<em>Hint:</em> Read the Numpy documentation to find out what I mean!) Which of these do you think we are most interested in in this course? 5. Calculate “cumulative sum” operation on a vector <code>x</code>? (This operation creates a new vector <code>y</code> whose first element is <code>x[0]</code>, second <code>x[0] + x[1]</code>, etc.) 6. Take the element-wise logarithm of a matrix?</p>
+</section>
+<section id="exercise-2-2" class="level4" data-number="1.2.3.2">
+<h4 data-number="1.2.3.2" class="anchored" data-anchor-id="exercise-2-2"><span class="header-section-number">1.2.3.2</span> Exercise 2</h4>
+<p>Do this <a href="https://www.codewars.com/kata/52fba2a9adcd10b34300094c">Codewars exercise</a> using Numpy indexing, i.e., not the built-in function <code>transpose</code>. You need to register at Codewars to do this exercise. In this and other Codewars problems, you can click the “Unlock solutions” button for solutions.</p>
+</section>
+<section id="exercise-3-1" class="level4" data-number="1.2.3.3">
+<h4 data-number="1.2.3.3" class="anchored" data-anchor-id="exercise-3-1"><span class="header-section-number">1.2.3.3</span> Exercise 3</h4>
+<p>Do the <a href="https://www.codewars.com/kata/568ff914fc7a40a18500005c/train/python">following exercise</a>, both with and without Numpy. (<em>Hint</em>: Use the <code>round</code> method to round the Numpy arrays. Remember to convert between <code>list</code> and <code>array</code> types!)</p>
+</section>
+<section id="exercise-4" class="level4" data-number="1.2.3.4">
+<h4 data-number="1.2.3.4" class="anchored" data-anchor-id="exercise-4"><span class="header-section-number">1.2.3.4</span> Exercise 4</h4>
+<p>Do the <a href="https://www.codewars.com/kata/57102bbfd860a3369300089c/train/python">following exercise</a>, both with and without Numpy.</p>
+</section>
+<section id="exercise-5" class="level4" data-number="1.2.3.5">
+<h4 data-number="1.2.3.5" class="anchored" data-anchor-id="exercise-5"><span class="header-section-number">1.2.3.5</span> Exercise 5</h4>
+<p>The Github repo <a href="https://github.com/rougier/numpy-100">Numpy-100</a> contains 100 Numpy exercises of variable difficulty. The Github page also includes hints and solutions. You can read the 100 problems <a href="https://hackmd.io/@JonasMoss/numpy-100">here</a>. Do <strong>exercises 1 - 11 in</strong> this repo. There is no upper limit to how many of the <code>numpy-100</code> you should do, but I would recommend you do as many as you can find time for. (These exercises are pretty short!) The point is to <a href="https://www.vocabulary.com/dictionary/grok"><em>grok</em></a> Numpy. (<em>Hint:</em> Use the Numpy documentation, Google, StackExchange, and so on. Check the hints if you have to.)</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../site/00-python-tips.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Python tips</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../site/02-statistical-simulation.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Statistical simulation and limit theorems</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

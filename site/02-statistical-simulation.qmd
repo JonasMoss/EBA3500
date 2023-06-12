@@ -1,6 +1,6 @@
 # Statistical simulation and limit theorems
 
-> For us, there are two reasons to learn about stochastic simulation. The first is that for complex systems, simulation can be an alternative to mathematical analysis, sometimes the only one. The second reason is that through simulation, we can get more feeling for random variables, and this is why we study stochastic simulation at this point in the book. We start by asking how we can generate a realization of a random variable. (Dekking et al., p. 72)
+> For us, there are two reasons to learn about stochastic simulation. The first is that for complex systems, simulation can be an alternative to mathematical analysis, sometimes the only one. The second reason is that through simulation, we can get more feeling for random variables, and this is why we study stochastic simulation at this point in the book. (Dekking et al., p. 72)
 
 ## Curriculum
 
@@ -14,14 +14,13 @@
 
 4. (*Optional*)Dekking et al., Chapter 6: Simulations. Except Chapter 6.4 The single-server queue.
 
-### Simulation in Python
+### Random number generators
 
 ```{python}
 import numpy as np
 import scipy as sp
 ```
 
-#### Random number generators
 We start by defining an random number generator (*rng*). Computers do not usually generate truly random numbers. Instead they generate so-called [pseudo-random numbers](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) using methods such as the [linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator). (It is possible to generate truly random numbers using the [`RDRAND` instruction](https://en.wikipedia.org/wiki/RDRAND) on x64 processors, but this feature is almost never used for various reasons.)
 
 ```{python}
@@ -47,15 +46,13 @@ Our generator `rng` was defined using the argument `seed = 313`. This is used fo
 ```{python}
 rng1 = np.random.default_rng(seed = 313)
 rng2 = np.random.default_rng(seed = 313)
-rng1.uniform(0, 1, size = (2, 2))
-rng2.uniform(0, 1, size = (2, 2))
+(rng1.uniform(0, 1, size = (2, 2)), rng2.uniform(0, 1, size = (2, 2)))
 ```
 But the results will not be the same if we do not provide the seed!
 ```{python}
 rng1 = np.random.default_rng()
 rng2 = np.random.default_rng()
-rng1.uniform(0, 1, size = (2, 2))
-rng2.uniform(0, 1, size = (2, 2))
+(rng1.uniform(0, 1, size = (2, 2)), rng2.uniform(0, 1, size = (2, 2)))
 ```
 
 Reproducibility is important in scientific applications, as the reader of your work can exactly reproduce your simulations on his own computer. It's also relevant for our coursework, as it allows your teacher to automatically grade your submissions.
@@ -68,21 +65,54 @@ rng2 = np.random.default_rng(seed = 313)
 x = rng1.uniform(2, 5, size = (2, 2)) # starting at 2 and ending at 5,
 y = rng2.uniform(0, 1, size = (2, 2)) # starting at 0 and ending at 1.
 
-x
-3*y + 2
+(x, 3*y + 2)
 ```
 
 Now $x$ and $y$ are the same. This will always be the case.
 
-##### Quick exercise
+#### Quick exercise
 
 Generate an array of uniformly distributed numbers on $[1,5]$ with $3$ rows and $4$ columns.
 
-#### Using distributions
+::: {.callout-tip collapse="true"}
+##### Solution
+```{python}
+x = rng1.uniform(2, 5, size = (3, 4))
+x
+```
+:::
 
-The Generator object supports random sampling from many distributions. See [the documenation](https://numpy.org/doc/stable/reference/random/generator.html#distributions) for a complete list.
 
-For instance, you can generate normally distributed random values (with mean `mu` and standard deviation `sigma`) using `rng.normal(mu, sigma, size)`. Again, the `size` argument tells `numpy` how many rows, columns and potentially more dimensions you want your array to have.
+### Using distributions
+
+You can generate normally distributed random values with mean `mu` and standard deviation `sigma` using `rng.normal(mu, sigma, size)`. Again, the `size` argument tells `numpy` how many rows, columns and potentially more dimensions you want your array to have.
+
+```{python}
+x = rng1.normal(0, 1, 10000)
+```
+Let's verify that `x` is normally distributed by plotting its histogram.
+
+```{python}
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.histplot(x, stat = "density")
+plt.show()
+plt.clf()
+```
+Recall the formula for the density of the normal distribution,
+$$f(x;\mu,\sigma) = \frac{1}{\sqrt{2\pi}\sigma}\exp{\lbrack-\frac{1}{2}(x-\mu)^2}\rbrack.$$
+To verify that the histogram is normal, we can overlay the density of a normal on top of it. 
+```{python}
+y = np.linspace(-5, 5, 1000)
+def normpdf(x, mu = 0, sigma = 1):
+  return np.exp(-(x - mu) ** 2 * 0.5) * 1/(np.sqrt(2 * np.pi) * sigma)
+
+sns.histplot(x, stat = "density")
+plt.plot(y, normpdf(y), color = "red")
+plt.show()
+```
+
+The `Generator` object supports random sampling from many other distributions too. See [the documenation](https://numpy.org/doc/stable/reference/random/generator.html#distributions) for a complete list. The examples below are especially important.
 
 | Function   | Distribution | 
 | --------   | ------------ |
@@ -95,11 +125,24 @@ For instance, you can generate normally distributed random values (with mean `mu
 | `exponential` | Exponentially distributed numbers with scale parameter.
 | `standard_exponential` | Exponentially distributed numbers with scale parameter 1.
 
+#### Quick exercise
+
+Simulate $10,000$ random variables from a standard exponential. Verify that the random variables were simulated from an exponential by overlaying the standard exponential density.
+
+::: {.callout-tip collapse="true"}
+##### Solution
+```{python}
+x = rng1.standard_exponential(10000)
+y = np.linspace(0, 6, 1000)
+sns.histplot(x, stat = "density")
+plt.plot(y, np.exp(-y), color = "red")
+plt.show()
+```
+:::
+
 ### Simulating dice throws
 
-Random number generators are often used to calculate probabilities that are hard to calculate by hand. You might be able to calculate, say, what he probability of getting a sum equal to $7$ is when throwing 2 dice. But what about the probability that the maximal value $6$ or that the sum is $7$? This is also doable by hand, but it's easier to do it by machine.
-
-To simulate this probability, we'll sample a lot of dice throws.
+Random number generators are often used to calculate probabilities that are hard to calculate by hand. You might be able to calculate, say, what he probability of getting a sum equal to $7$ is when throwing $2$ dice. But what about the probability that the maximal value $6$ or that the sum is $7$? This is also doable by hand, but it's easier to do it by machine.
 
 ```{python}
 rng = np.random.default_rng(seed = 313)
@@ -107,16 +150,9 @@ throws = rng.integers(1, 7, size = (10000, 2))
 # throws contaisn 10000 rows of two dice throws.
 totals = throws.sum(axis = 1)
 maxs = throws.max(axis = 1)
-totals
-maxs
+(totals, maxs)
 ```
-To calculate our probability, we need either `totals == 7` or `maxs == 6`.
-
-```{python}
-totals == 7
-maxs == 6
-```
-We can use vectorized "OR" using the Numpy function `logical_or`.
+To calculate our probability, we need either `totals == 7` or `maxs == 6`. We can use vectorized "OR" using the Numpy function `logical_or` to calculate this.
 ```{python}
 x = np.logical_or(totals == 7, maxs == 6)
 x
@@ -142,19 +178,8 @@ The result of this simulation is slightly different from the last one. This is d
 rng = np.random.default_rng(seed = 313)
 prob(rng)
 ```
-### Simulating complicated dice throws
 
-Suppose you throw 6 dice and want to figure out the probability distribution of their sums. 
-
-```{python}
-def prob(rng, n_reps = 10000):
-  throws = rng.integers(1, 7, size = (10000, 2))
-  return np.logical_or(throws.sum(axis = 1) == 7, throws.max(axis = 1) == 6).mean()
-  
-prob(rng)
-```
-
-### Simulating from distributions
+### Complex simulation
 Suppose that $X_1,X_2,\ldots,X_k$ are $k$ iid exponential variables with density $\lambda e^{-\lambda x}, \lambda > 0$. It has been claimed that the minimum of $k$ such variables are exponentially distributed with parameter $k \lambda$, i.e., $\min(X_1,X_2,\ldots,X_k)$ has density $\lambda k e^{-\lambda k x}$. Let's try to verify this using simulations.
 
 ```{python}
