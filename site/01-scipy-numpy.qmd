@@ -62,7 +62,7 @@ x.dtype
 
 We compare the execution speed of these functions using the `benchmark` function from the `tinybench` package. As always, type `help(benchmark)` in a Python interpreter to get help for the function. Below, we sample `ntimes = 10` and use a warm up of `10` (to get the processor running). The `g` argument tells `benchmark` where to find the functions in the list, and the argument `globals()` tells it to look at the top level.  
 ```{python}
-from tinybench import benchmark, benchmark_env
+from tinybench import benchmark
 bench = benchmark(['sum_python(10 ** 6)', 'sum_numpy(10 ** 6)'], ntimes = 100, warmup = 10, g = globals())
 bench.plot()
 ```

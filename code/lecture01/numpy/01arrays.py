@@ -1,3 +1,4 @@
+# Sum up two lists
 x = [1, 2, 3]
 y = [5, 9, 4]
 z = zip(x, y)

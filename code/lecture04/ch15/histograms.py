@@ -25,5 +25,3 @@ plt.clf()
 sns.histplot(old_faithful, stat="probability")
 plt.show()
 plt.clf()
-
-sns.kdeplot(old_faithful)

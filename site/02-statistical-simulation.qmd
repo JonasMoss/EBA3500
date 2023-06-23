@@ -1,4 +1,4 @@
-# Statistical simulation and limit theorems
+# Statistical simulation
 
 > For us, there are two reasons to learn about stochastic simulation. The first is that for complex systems, simulation can be an alternative to mathematical analysis, sometimes the only one. The second reason is that through simulation, we can get more feeling for random variables, and this is why we study stochastic simulation at this point in the book. (Dekking et al., p. 72)
 
@@ -6,24 +6,16 @@
 
 ### Core readings
 
-1.  Dekking et al., Chapter 13: The law of large numbers
+1. The notes below.
 
-2.  Dekking et al., Chapter 14: The central limit theorem
-
-3. The notes below.
-
-4. (*Optional*)Dekking et al., Chapter 6: Simulations. Except Chapter 6.4 The single-server queue.
+2. (*Optional*) Dekking et al., Chapter 6: Simulations. Except Chapter 6.4 The single-server queue.
 
 ### Random number generators
-
-```{python}
-import numpy as np
-import scipy as sp
-```
 
 We start by defining an random number generator (*rng*). Computers do not usually generate truly random numbers. Instead they generate so-called [pseudo-random numbers](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) using methods such as the [linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator). (It is possible to generate truly random numbers using the [`RDRAND` instruction](https://en.wikipedia.org/wiki/RDRAND) on x64 processors, but this feature is almost never used for various reasons.)
 
 ```{python}
+import numpy as np
 rng = np.random.default_rng(seed = 313)
 rng
 ```
@@ -95,7 +87,7 @@ Let's verify that `x` is normally distributed by plotting its histogram.
 ```{python}
 import seaborn as sns
 import matplotlib.pyplot as plt
-sns.histplot(x, stat = "density")
+sns.histplot(x)
 plt.show()
 plt.clf()
 ```
@@ -179,13 +171,61 @@ rng = np.random.default_rng(seed = 313)
 prob(rng)
 ```
 
-### Complex simulation
-Suppose that $X_1,X_2,\ldots,X_k$ are $k$ iid exponential variables with density $\lambda e^{-\lambda x}, \lambda > 0$. It has been claimed that the minimum of $k$ such variables are exponentially distributed with parameter $k \lambda$, i.e., $\min(X_1,X_2,\ldots,X_k)$ has density $\lambda k e^{-\lambda k x}$. Let's try to verify this using simulations.
+### More complex simulations
+Suppose that $$X_1,X_2,\ldots,X_k$$ are $k$ iid exponential variables with density $\frac{1}{\beta} e^{-\frac{1}{\beta} x}, \beta > 0$, where $\beta$ is the scale parameter. It has been claimed that the minimum of $k$ such variables are exponentially distributed with parameter $\beta / k$, i.e., $\min(X_1,X_2,\ldots,X_k)$ has density $\frac{k}{\beta} e^{-\frac{k}{\beta} x}$. Let's try to verify this using simulations.
 
 ```{python}
 rng = np.random.default_rng(seed = 313)
-
+x = rng.exponential(scale = 2, size = (10000, 10))
+minimas = x.min(axis = 1)
 ```
+Let's plot and verify
+
+```{python}
+sns.histplot(minimas, stat = "density")
+y = np.linspace(0, 2, 100)
+plt.plot(y, 10/2 * np.exp(-10/2 * y), color = "red")
+plt.show()
+minimas
+```
+#### Quick exercise
+
+Turn the code above into a function of $k$ and $\beta$. Verify the formula visually for $k = 7, 99$ and $\beta = 1, 100$. 
+
+::: {.callout-tip collapse="true"}
+##### Solution
+```{python}
+rng = np.random.default_rng(seed = 313)
+def plotter(rng, beta, k):
+  x = rng.exponential(scale = 2, size = (10000, 10))
+  minimas = x.min(axis = 1)
+  sns.histplot(minimas, stat = "density")
+  y = np.linspace(0, 2, 100)
+  plt.plot(y, k/beta * np.exp(-k/beta * y), color = "red")
+  plt.show()
+
+plotter(rng, 1, 7)
+plotter(rng, 10, 7)
+plotter(rng, 100, 7)
+plotter(rng, 1, 99)
+plotter(rng, 10, 99)
+plotter(rng, 100, 99)
+  
+```
+:::
+
 ## Exercises
 
-## Additional resources
+### Exercise 1
+Write a function `maximum_throw` that approximates the probability of the maximal throw. It should take the same arguments as 'minimum_throw'. Plot a bargraph of maximum_throw alongside a bargraph for minimum_throw when `throw = 5` in both cases. What do you see?
+
+### Exercise 2
+Write a function `sum_throw` that finds the probability of obtaining every possible sums of `throw` dice. Make a barplot of the distribution when `throw` equals 7.
+
+### Exercise 3
+Write a function that calculates the expected value of the sums in (2), i.e, `sum(probs * value)`.
+
+### Exercise 4
+Write a function that finds the probability of obtaining every possible product of `throw` dice. Rember the docstring. Find the probability that the product of 5 dice throws exceeds 3888.
+
+*Hints:* Look up np.max, np.sum.
