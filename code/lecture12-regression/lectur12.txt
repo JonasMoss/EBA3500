@@ -1,0 +1,6 @@
+* Simple linear regression.
+    * Copy and modify suitably.
+    * Make into two reasonably short videos.
+    * Introduction to statsmodels too.
+* Multiple linear regression
+    

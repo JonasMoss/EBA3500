@@ -1,0 +1,25 @@
+# Basics of multiple linear regression
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+
+* James et al., Chapter 3: Statistical learning
+
+## Exercises
+All exercises in Chapter 3 are recommended.
+#### Conceptual
+- 3.7.1
+- 3.7.2
+- 3.7.3
+- 3.7.4 Verify your answers using a suitable Python simulation.
+- 3.7.5
+- 3.7.6 Verify it graphically in Python using a suitable simulation.
+
+#### Applied
+- 3.7.8
+- 3.7.9-3.7.12
+
+## Recommended resources

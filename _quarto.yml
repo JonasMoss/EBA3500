@@ -15,16 +15,17 @@ book:
     - site/00-python-tips.qmd
     - site/01-scipy-numpy.qmd
     - site/02-statistical-simulation.qmd
-    - site/03-exploratory-data-analysis.qmd
-    - site/04-statistical-models.qmd
-    - site/05-unbiased-estimators-efficiency.qmd
-    - site/06-constructing-estimators.qmd
-    - site/07-confidence-intervals.qmd
-    - site/08-testing-hypotheses.qmd
-    - site/09-testing-the-sample-mean.qmd
-    - site/10-statistical-learning.qmd
-    - site/11-basics-of-linear-regression.qmd
-    - site/12-inference-for-linear-regression.qmd
+    - site/03-limit-theorems.qmd
+    - site/04-exploratory-data-analysis.qmd
+    - site/05-statistical-models.qmd
+    - site/06-unbiased-estimators-efficiency.qmd
+    - site/07-constructing-estimators.qmd
+    - site/08-confidence-intervals.qmd
+    - site/09-testing-hypotheses.qmd
+    - site/10-testing-the-sample-mean.qmd
+    - site/11-statistical-learning.qmd
+    - site/12-basics-of-linear-regression.qmd
+    - site/13-inference-for-linear-regression.qmd
     - site/14-binary-regression.qmd
 
 format:

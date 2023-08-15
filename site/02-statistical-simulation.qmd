@@ -217,10 +217,10 @@ plotter(rng, 100, 99)
 ## Exercises
 
 ### Exercise 1
-Write a function `maximum_throw` that approximates the probability of the maximal throw. It should take the same arguments as 'minimum_throw'. Plot a bargraph of maximum_throw alongside a bargraph for minimum_throw when `throw = 5` in both cases. What do you see?
+Write a function `maximum_throw` that approximates the probability of the maximal throw. It should take the same arguments as 'minimum_throw'. Plot a bargraph of maximum_throw alongside a bar graph for minimum_throw when `throw = 5` in both cases. What do you see?
 
 ### Exercise 2
-Write a function `sum_throw` that finds the probability of obtaining every possible sums of `throw` dice. Make a barplot of the distribution when `throw` equals 7.
+Write a function `sum_throw` that finds the probability of obtaining every possible sums of `throw` dice. Make a bar plot of the distribution when `throw` equals 7.
 
 ### Exercise 3
 Write a function that calculates the expected value of the sums in (2), i.e, `sum(probs * value)`.

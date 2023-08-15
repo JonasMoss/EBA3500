@@ -1,0 +1,23 @@
+# Exploratory data analysis
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+
+## Curriculum
+1. The core readings of Dekking et al.
+2. Python notes about `seaborn`, `Numpy`, and `scipy`.
+
+### Core readings
+
+1.  Dekking et al., Chapter 15: Exploratory data analysis: graphical summaries
+2.  Dekking et al., Chapter 16: Exploratory data analysis: numerical summaries
+
+### Python
+
+#### Using `seaborn` for graphical summaries
+
+#### Numpy and scipy for numerical summaries
+
+## Exercises

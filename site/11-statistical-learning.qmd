@@ -1,0 +1,26 @@
+# Statistical learning, machine learning, and statistics
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+
+* James et al., Chapter 1: Introduction
+* James et al., Chapter 2: Statistical learning
+
+## Exercises
+Exercises from James et. al. Chapter 2.
+### Conceptual
+- Roughly reproduce 2.3 Introduction to `R` in Python.
+- 2.4.1.
+- 2.4.5.
+- 2.4.2.
+- 2.4.3. Do it on pen and paper; use the internet if needed
+- 2.4.4.
+
+### Applied
+- 2.4.8 (do it in Python instead; you should know the functions already!)
+- 2.4.9 (highly exam relevant!)
+
+## Recommended resources

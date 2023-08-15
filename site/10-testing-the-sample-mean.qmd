@@ -1,0 +1,14 @@
+# Testing the sample mean
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+* Dekking et al., Chapter 27: The t-test
+* Dekking et al., Chapter 28: Comparing two samples
+* The following article on AB testing.
+
+## Exercises
+
+## Recommended resources

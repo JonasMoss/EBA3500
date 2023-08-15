@@ -4,21 +4,15 @@ In this course we'll several external Python libraries. If you have trouble inst
 
 1. `Numpy`, the fundamental package for scientific computing with Python. Numpy does all the heavy mathematical lifiting, such as matrix multiplication and summing. We use Numpy due to its *speed* and *convenience*. The syntax of Numpy is very similar to that of [TensorFlow](https://www.tensorflow.org), which is used extensively in heavy-duty machine learning applications.
 2. `Pandas` deals with data frames. Most of our data will be on the Pandas format. 
-3. `statsmodels`. Statsmodels is the Python package for basic statistical analysis in Python. It closely mimics `R` in syntax and functionality.
+3. `statsmodels`  is the Python package for basic statistical analysis in Python. It closely mimics `R` in syntax and functionality.
 4. `scikit-learn` is somewhat similar to statsmodels, but contains much more functionality and is geared towards [machine learning instead of statistics](https://towardsdatascience.com/the-actual-difference-between-statistics-and-machine-learning-64b49f07ea3). 
 5. `matplotlib`, the basic plotting library in Python.
 6. `seaborn`. A package that simplifies plotting. 
 7. `tinybench`. Used for doing benchmarks, i.e., timing how long functions take to run. You can learn a lot about how to write efficient code by routinely using this package while coding. It's also quite fun - optimizing code is one of the pleasures of programming, and `tinybench` makes it easy to check if any of your optimizations make sense.
 
 ## Curriculum
-
 1. [Numpy for absolute beginners](https://numpy.org/doc/stable/user/absolute_beginners.html)
 2. The notes on this webpage.
-
-### Numpy
-I sometimes write that you should *familiarize yourself with* the documentation. This means that you should: 
-1. Fire up an instance of [Visual Studio Code](https://code.visualstudio.com) (recommended), Jupyter Notebook, or your prefered way to write Python.
-2. Go to the supplied links and *actively* read them. You can't just print out the documents and read them in the shade of a tree. You should make an hypothesis about how a snippet of code works, copy the Python code to your editor, and then modify it to check if your hypothesis is true.
 
 ### The speed of `Numpy`
 
@@ -27,12 +21,12 @@ Python is very slow language. So slow, in fact, that most optimizations in Pytho
 The following function sums up all numbers from $1..n$ in vanilla Python.
 ```{python}
 def sum_python(n):
-  numbers = range(0, n)
   acc = 0
-  for i in numbers:
+  for i in range(0, n):
     acc = acc + i
   return acc
 ```
+Make sure you understand what this function does. Can you rewrite it to calculate the product of the $n$ first numbers?
 
 The function below uses Numpy for the same task.
 ```{python}
@@ -43,7 +37,19 @@ def sum_numpy(n):
   
 ```
 
-Both functions return the same value.
+Here `numbers` is an array of integers (`int64` is a type of integer), and `sum` is one of many Numpy methods that operate on arrays. Unlike Python lists, Numpy arrays are *typed*, and this is a major reason why Numpy is so faster than Python. A Python list can contain just about anything. 
+
+```{python}
+ls = [1, "hello", print]
+```
+
+Here `ls` contains a number, a string, and a function (actually, a "builtin function"). Recall that you can check the type of an object by calling `type` on it. For instance, we can verify the types above by calling 
+
+```{python}
+print([type(x) for x in ls])
+```
+
+Let's come back to the matter at hand. We have two implementations of a function that sums the numbers from `1..n`. Both functions return the same value.
 ```{python}
 sum_python(10 ** 6)
 ```
@@ -51,7 +57,7 @@ sum_python(10 ** 6)
 ```{python}
 sum_numpy(10 ** 6)
 ```
-The Numpy code is arguably easier to read. There is no doubt what the `.sum` method does. 
+Observe that the Numpy code is arguably easier to read. There is no doubt what the `.sum` method does. 
 
 We use the `dtype = np.int64` argument in the `np.arange` function. This makes `int64` the data type of the resulting Numpy array. These are 64 bits (signed) integers, but the standard is 32 bits integer. The difference between these lie in their maximum and minimum values. The maximal value of a 64 bits integer is `9,223,372,036,854,775,807`, but the maximal value of an `i32` is merely `2,147,483,647`. You have to manually specify `i64` when dealing with big integers in Numpy, but you do not need to do that in Python, as it can use integers of arbitrary size, at the cost of speed. You can always find the data type of a Numpy object using the `.dtype` method, e.g.,
 

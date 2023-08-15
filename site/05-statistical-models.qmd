@@ -1,0 +1,39 @@
+# Basic statistical models and the bootstrap
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+
+1. The core readings of Dekking et al.
+2. Python notes about bootstrapping and modelling in Python.
+
+### Core readings
+1. Dekking et al., Chapter 17: Basic statistical models, except Chapter 17.4. Ignore the paragraphs about the Poisson model. 
+
+2. Dekking et al., Chapter 18: The bootstrap
+
+### Basic statistical model in Python
+
+### Bootstrap in Python
+
+## Exercises
+* 17.1
+* 17.2
+* 17.4 (use Python to visualize part b)
+* 17.5 
+* 17.6
+* 17.10
+* 17.11
+
+* 18.1 (*Hint*: How many combinations are double counted due to the two 1s?)
+* 18.2 Use exact computations!
+* 18.3 Use exact computations!
+* 18.4 Use exact computations!
+* 18.6
+* 18.7
+* 18.12
+* 18.13
+
+## Additional resources

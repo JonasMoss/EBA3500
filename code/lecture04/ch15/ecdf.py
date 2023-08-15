@@ -3,6 +3,11 @@ from statsmodels.distributions.empirical_distribution import ECDF
 import pandas as pd
 import matplotlib.pyplot as plt
 
+rng = np.random.default_rng(seed=313)
+x = rng.normal(size=100)
+mean = x.mean()
+sd = x.std(ddof=1)
+
 
 # https://www.kaggle.com/datasets/aungpyaeap/supermarket-sales
 
@@ -45,5 +50,3 @@ yangon = supermarket.query(f"City == 'Yangon'").cogs
 kstest(mandalay, naypyitaw).pvalue
 kstest(mandalay, yangon).pvalue
 kstest(naypyitaw, yangon).pvalue
-
-# Short exercise.

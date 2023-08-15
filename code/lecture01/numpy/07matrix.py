@@ -1,11 +1,11 @@
 import numpy as np
-
 np.set_printoptions(suppress=True)
 
-# Dot product
+# One-dimensional arrays: Or 'vectors'.
 x = np.array([1, 2, 3])
 y = np.array([3, 2, 1])
 
+# Dot product
 x.dot(y)
 np.dot(x, y)
 x @ y

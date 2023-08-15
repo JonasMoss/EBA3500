@@ -1,0 +1,34 @@
+# Constructing estimators
+
+::: callout-important
+This page is ***not finished***, but might contain notes from the course developers. The curriculum, exercises, and recommended resources listed on this page is subject to change.
+:::
+
+## Curriculum
+
+### Core readings
+1. Dekking et al., Chapter 21: Maximum likelihood
+2. Dekking et al., Chapter 22: The method of least squares
+
+## Exercises
+
+#### Maximum likelihood.
+* 21.4 (Poisson ML and invariance principle)
+* 21.6 (Modified uniform distribution ish)
+* 21.7 (Rayleigh distribution)
+* 21.8 (Multinomial)
+* 21.10 (Pareto)
+* 21.14 (Uniform)
+* 21.15 (Two parameters: Copy into Python and fix.)
+* **Unfinished:** Log-normal problem
+* **Unfinished:** Uniform on both sides, $\log(u - l)$.
+
+#### Least squares.
+* 22.1 (Drawing linear regression.)
+* 22.2 (Leverage point.)
+* 22.7 (Exponential?)
+* 22.8 (Conceptual).
+* 22.9 (Without intercept.)
+* 22.12 (Unbiased.)
+
+## Additional resources

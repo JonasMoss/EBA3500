@@ -26,7 +26,7 @@ This course follows no strict schedule, as it is based around video lectures. Th
 
 This is ***not a relaxing course***. The content is difficult, both in terms of concepts and skills required. Statistics has an unfair and completely untrue reputation as an easy subject. It is not. Those who claim statistics is easy do not know statistics.
 
-Remember that you are expected to work full days as a student. Since you take four courses and all of them, presumably, have approximately $2$ hours of lectures, that leaves $8$ hours of studying -- on your own -- each week. I expect you to spend *at least* $10$ hours with this course per week. But keeping in mind that this course is both significantly more important and significantly harder than your other courses, so you might have to spend even more time on it.
+Remember that you are expected to work full days as a student. Since you take four courses and all of them, presumably, have approximately $2$ hours of lectures, that leaves $8$ hours of studying -- on your own -- each week. I expect you to spend *at least* $10$ hours with this course per week. But keeping in mind that this course is both significantly more important *and* significantly harder than your other courses, so you might have to spend even more time on it. 
 
 ## Resources
 
@@ -44,7 +44,7 @@ There is no definite 1st course in Python curriculum, which is a big and somewha
 
 # On programming
 
-This course is partly about programming. Students often find programming hard. **Don't expect to be able solve every exercise in 5 minutes!** Solving programming exercises often take a long time, and you need to persevere.
+This course is partly about programming. Students often find programming hard. **Don't expect to be able solve every exercise in 5 minutes!** Solving programming exercises often take a long time, and you need to persevere. The only way to become good at programming requires you to invest a lot of time, despite the many empty promises out there. I would recommend you read the short [Teach Yourself Programming in Ten Years](https://www.norvig.com/21-days.html) by famous AI researcher Peter Norvig.
 
 To become a decent programmer it's a good idea to
 

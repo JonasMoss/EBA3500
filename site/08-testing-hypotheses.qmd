@@ -1,8 +1,0 @@
-# Testing hypotheses
-
-## Curriculum
-* Dekking et al., Chapter 25: Testing hypotheses: essentials
-* Dekking et al., Chapter 26: Testing hypotheses: elaboration 
-## Exercises
-
-## Additional resources
